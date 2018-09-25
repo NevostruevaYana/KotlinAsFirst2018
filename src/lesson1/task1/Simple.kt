@@ -105,9 +105,6 @@ fun thirdDigit(number: Int): Int = number / 100 % 10
 fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
         minutesArrive + hoursArrive * 60 - hoursDepart * 60 - minutesDepart
 
-
-
-
 /**
  * Простая
  *
@@ -125,13 +122,3 @@ fun accountInThreeYears(initial: Int, percent: Int): Double =
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
 fun numberRevert(number: Int): Int = number % 10 * 100 + number / 10 % 10 * 10 + number / 100
-
-
-
-
-
-
-
-
-
-

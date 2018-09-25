@@ -64,8 +64,10 @@ fun daysInMonth(month: Int, year: Int): Int = when {
  */
 fun circleInside(x1: Double, y1: Double, r1: Double,
                  x2: Double, y2: Double, r2: Double): Boolean {
-    return if (sqrt(sqr(x1 - x2) + sqr(y1 - y2)) + r1 <= r2) return true
-    else false
+    return when {
+        (sqrt(sqr(x1 - x2) + sqr(y1 - y2)) + r1 <= r2) -> true
+        else -> false
+    }
 }
 
 /**
@@ -78,6 +80,9 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    return if (((r >= a) && (s >= b)) || ((r >= b) && (s >= a)) || ((r >= a) && (s >= c)) || ((r >= c) && (s >= a))
-            || ((r >= b) && (s >= c)) || ((r >= c) && (s >= b))) return true else false
+    return when {
+        ((r >= a) && (s >= b)) || ((r >= b) && (s >= a)) || ((r >= a) && (s >= c)) || ((r >= c) && (s >= a))
+                || ((r >= b) && (s >= c)) || ((r >= c) && (s >= b)) -> true
+        else -> false
+    }
 }
