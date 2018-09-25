@@ -20,8 +20,10 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
 fun isNumberHappy(number: Int): Boolean {
-    return if ((number % 10 + number % 100 / 10) == (number / 10 + number / 100 % 10)) return true
-    else false
+    return when {
+        (number % 10 + number % 100 / 10) == (number / 1000 + number / 100 % 10) -> true
+        else -> false
+    }
 }
 
 /**
@@ -32,8 +34,10 @@ fun isNumberHappy(number: Int): Boolean {
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    return if ((x1 == x2) || (y1 == y2) || (kotlin.math.abs(x2 - x1) == kotlin.math.abs(y2 - y1))) return true
-    else false
+    return when {
+        (x1 == x2) || (y1 == y2) || (kotlin.math.abs(x2 - x1) == kotlin.math.abs(y2 - y1)) -> true
+        else -> false
+    }
 }
 
 
@@ -44,13 +48,10 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int = when {
-    (year % 4 == 0) && (month == 2) -> 28
-    (year % 400 != 0) && (year % 4 != 0) && (month == 2) -> 29
-    (month % 10 == 1) && (month in 1..7) -> 31
-    (month % 10 == 0) && (month in 1..7) -> 30
-    (month % 10 == 0) && (month in 8..12) -> 31
-    (month % 10 == 1) && (month in 9..11) -> 30
-    else -> 0
+    ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)) && (month == 2) -> 29
+    (month == 4) || (month == 6) || (month == 9) || (month == 11) -> 30
+    month == 2 -> 28
+    else -> 31
 
 }
 
