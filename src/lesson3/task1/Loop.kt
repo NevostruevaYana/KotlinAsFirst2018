@@ -1,7 +1,10 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson3.task1
 
+import lesson1.task1.sqr
+import kotlin.math.PI
 import kotlin.math.sqrt
+import kotlin.math.pow
 
 /**
  * Пример
@@ -173,7 +176,12 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
+fun squareBetweenExists(m: Int, n: Int): Boolean {
+    val k = sqrt(n.toDouble())
+    val g = kotlin.math.floor(k)
+    return (g >= sqrt(m.toDouble()))
+}
+
 
 /**
  * Средняя
@@ -191,7 +199,15 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var a = x
+    var count = 0
+    while (a != 1) {
+        count += 1
+        if (a % 2 == 0) a /= 2 else a = 3 * a + 1
+    }
+    return count
+}
 
 /**
  * Средняя
@@ -200,7 +216,20 @@ fun collatzSteps(x: Int): Int = TODO()
  * sin(x) = x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    val a = x % (2 * PI)
+    var b = a
+    var number = a
+    var i = 1.0
+    while (true) {
+        number = -number * sqr(a) / (i + 1) / (i + 2)
+        if (Math.abs(number) < eps)
+            break
+        b += number
+        i += 2
+    }
+    return b
+}
 
 /**
  * Средняя
@@ -209,7 +238,20 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * cos(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    val a = x % (2 * PI)
+    var b = 1.0
+    var number = 1.0
+    var i = 0.0
+    while (true) {
+        number = -number * sqr(a) / (i + 1) / (i + 2)
+        if (Math.abs(number) < eps)
+            break
+        b += number
+        i += 2
+    }
+    return b
+}
 
 /**
  * Средняя
@@ -218,7 +260,15 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var a = 0
+    var b = n
+    while (b > 0) {
+        a = a * 10 + b % 10
+        b /= 10
+    }
+    return a
+}
 
 /**
  * Средняя
@@ -229,7 +279,7 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя
@@ -239,7 +289,15 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var x = n / 10
+    val l = n % 10
+    while (x > 0) {
+        if (x % 10 != l) return true
+        x /= 10
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -250,7 +308,18 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var i = 0
+    var number = 0
+    while (number < n) {
+        i += 1
+        number += digitNumber(sqr(i))
+    }
+    var h = 1
+    for (g in 1..number - n) h *= 10
+    val l = i * i / h % 10
+    return l
+}
 
 /**
  * Сложная
@@ -261,4 +330,15 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var i = 0
+    var number = 0
+    while (number < n) {
+        i += 1
+        number += digitNumber(fib(i))
+    }
+    var h = 1
+    for (g in 1..number - n) h *= 10
+    val l = fib(i) / h % 10
+    return l
+}
