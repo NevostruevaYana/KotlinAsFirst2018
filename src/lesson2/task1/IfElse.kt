@@ -123,8 +123,8 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int = when {
-    ((kingX == rookX) || (kingY == rookY) && (abs(kingX - bishopX) == abs(kingY - bishopY))) -> 3
-    (kingX == rookX) || (kingY == rookY) -> 1
+    (((kingX == rookX) || (kingY == rookY)) && ((abs(kingX - bishopX)) == abs(kingY - bishopY))) -> 3
+    ((kingX == rookX) || (kingY == rookY)) -> 1
     abs(kingX - bishopX) == abs(kingY - bishopY) -> 2
     else -> 0
 }
@@ -137,19 +137,30 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = when {
-    ((a + b) < c) || ((a + c) < b) || ((c + b) < a) -> -1
-    (a > b) && (a > c) && ((sqr(c) + sqr(b)) > sqr(a)) -> 0
-    (b > a) && (b > c) && ((sqr(a) + sqr(c)) > sqr(b)) -> 0
-    (c > a) && (c > b) && ((sqr(a) + sqr(b)) > sqr(c)) -> 0
-    (a > b) && (a > c) && ((sqr(c) + sqr(b)) == sqr(a)) -> 1
-    (b > a) && (b > c) && ((sqr(c) + sqr(b)) == sqr(a)) -> 1
-    (c > a) && (c > b) && ((sqr(c) + sqr(b)) == sqr(a)) -> 1
-    (a > b) && (a > c) && ((sqr(c) + sqr(b)) < sqr(a)) -> 2
-    (b > a) && (b > c) && ((sqr(a) + sqr(c)) < sqr(b)) -> 2
-    (c > a) && (c > b) && ((sqr(a) + sqr(b)) < sqr(c)) -> 2
-    else -> 0
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val n = maxOf(a, b, c)
+    val n1: Double
+    val n2: Double
+    when {(n == a) -> {
+        n1 = c
+        n2 = b
+    }
+        (n == b) -> {
+            n1 = a
+            n2 = c
+        }
+        else -> {
+            n1 = a
+            n2 = b
+        }
+    }
+    return when {(n > n1 + n2) -> -1
+        (sqr(n) == n1 * n1 + n2 * n2) -> 1
+        (sqr(n) > n1 * n1 + n2 * n2) -> 2
+        else -> 0
+    }
 }
+
 
 /**
  * Средняя
@@ -159,10 +170,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = when {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
-    ((a >= c) && (d >= a) && (d <= b)) -> d - a
-    ((a >= c) && (d >= a) && (d > b)) -> b - a
-    ((a < c) && (c <= b) && (b <= d)) -> b - c
-    ((a < c) && (c <= b) && (b > d)) -> d - c
-    else -> -1
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    val m = maxOf(a, c)
+    val n = minOf(b, d)
+    return if (m <= n) n - m else -1
 }
