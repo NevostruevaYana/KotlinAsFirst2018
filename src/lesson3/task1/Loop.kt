@@ -70,14 +70,14 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int {
-    var count = 0
-    var k = n
-    return if (n == 0) 1 else {
-        while (k > 0) {
-            k /= 10
-            count += 1
+    var m = n
+    var a = 0
+    if (n < 10) return 1 else {
+        while (m > 0) {
+            m /= 10
+            a += 1
         }
-        return count
+        return a
     }
 }
 
@@ -119,17 +119,11 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var m = 0
-    var i = 2
-    var l = 2
-    while (m == 0) {
-        if (n % i == 0) {
-            l = i
-            m += 1
-        }
-        i += 1
+    if (isPrime(n)) return n else {
+        var a = 2
+        for (i in 2..sqrt(n.toDouble()).toInt()) while (n % a != 0) a += 1
+        return a
     }
-    return l
 }
 
 /**
@@ -137,19 +131,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var m = 0
-    var i = n - 1
-    var l = n - 1
-    while (m == 0) {
-        if (n % i == 0) {
-            l = i
-            m += 1
-        }
-        i -= 1
-    }
-    return l
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
