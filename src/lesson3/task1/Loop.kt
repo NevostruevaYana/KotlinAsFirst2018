@@ -4,7 +4,7 @@ package lesson3.task1
 import lesson1.task1.sqr
 import kotlin.math.PI
 import kotlin.math.sqrt
-import kotlin.math.pow
+import kotlin.math.abs
 
 /**
  * Пример
@@ -70,9 +70,9 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int {
-    var m = n
+    var m = abs(n)
     var a = 0
-    if (n < 10) return 1 else {
+    if (m < 10) return 1 else {
         while (m > 0) {
             m /= 10
             a += 1
