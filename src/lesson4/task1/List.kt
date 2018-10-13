@@ -512,7 +512,7 @@ fun russian(n: Int): String {
     if (n in 100000..999999) {
         ch += russian11(n / 1000)
         if (n / 1000 % 10 == 0 || n / 1000 % 10 in 5..9 || n / 1000 % 100 in 11..19) ch += b[1] else {
-            if (n % 10 == 1) ch += b[0] else ch += b[2]
+            if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
         }
         if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
             if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0) ch += ' ' + russian3(n % 1000)
@@ -520,8 +520,8 @@ fun russian(n: Int): String {
     } else {
         if (n in 10000..99999) {
             ch += russian22(n / 1000)
-            if (n / 1000 in 11..19 || n / 1000 % 100 in 5..9 || n / 1000 % 100 == 0) ch += b[1] else {
-                if (n % 10 == 1) ch += b[0] else ch += b[2]
+            if (n / 1000 in 11..19 || n / 1000 % 10 in 5..9 || n / 1000 % 10 == 0) ch += b[1] else {
+                if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
             }
             if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
                 if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0) ch += ' ' + russian3(n % 1000)
@@ -530,7 +530,7 @@ fun russian(n: Int): String {
             if (n in 1000..9999) {
                 ch += russian31(n / 1000)
                 if (n / 1000 % 10 in 5..9 || n / 1000 % 10 == 0) ch += b[1] else {
-                    if (n % 10 == 1) ch += b[0] else ch += b[2]
+                    if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
                     if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
                         if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0) ch += ' ' + russian3(n % 1000)
                     }
