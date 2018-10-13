@@ -533,10 +533,10 @@ fun russian(n: Int): String {
                 ch += russian31(n / 1000)
                 if (n / 1000 % 10 in 5..9 || n / 1000 % 10 == 0) ch += b[1] else {
                     if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
-                    if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
-                        if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0)
-                            ch += ' ' + russian3(n % 1000)
-                    }
+                }
+                if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
+                    if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0)
+                        ch += ' ' + russian3(n % 1000)
                 }
             } else {
                 if (n % 1000 in 100..999) ch += russian1(n % 1000) else {
