@@ -117,7 +117,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var s = 0.0
-    for (i in v) s += i * i
+    for (i in /*Doublev*/v) s += i * i
     return sqrt(s)
 }
 
@@ -246,7 +246,7 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int>{
+fun convert(n: Int, base: Int): List<Int> {
     val list = ArrayList<Int>()
     var m = n
     do {
@@ -264,7 +264,17 @@ fun convert(n: Int, base: Int): List<Int>{
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    var list = ""
+    var m = n
+    if (n == 0) return "0"
+    while (m > 0) {
+        val k = m % base
+        list += if (k < 10) k.toString() else ('a' + k - 10)
+        m /= base
+    }
+    return list.reversed()
+}
 
 /**
  * Средняя
@@ -273,7 +283,15 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var a = 0
+    var st = 1
+    digits.reversed().forEach {
+        a += it * st
+        st *= base
+    }
+    return a
+}
 
 /**
  * Сложная
@@ -284,7 +302,16 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    var a = 0
+    var st = 1
+    str.reversed().forEach {
+        val k = if (it <= '9') it - '0' else (it + 10 - 'a')
+        a += k * st
+        st *= base
+    }
+    return a
+}
 
 /**
  * Сложная
