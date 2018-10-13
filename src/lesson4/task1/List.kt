@@ -321,7 +321,99 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman1(n: Int): String{
+    var a = ""
+    if (n in 1..3) for (i in 1..n) a += 'I'
+    if (n == 4) {
+        a += 'I'
+        a += 'V'
+    }
+    if (n == 5) a += 'V'
+    if (n in 6..8) {
+        a += 'V'
+        for (i in 1..n - 5) a += 'I'
+    }
+    if (n == 9) {
+        a += 'I'
+        a += 'X'
+    }
+    return a
+}
+
+fun roman2(n: Int): String {
+    var a = ""
+    if (n in 10..39) {
+        val y = n / 10
+        for (i in 1..y) a += 'X'
+    }
+    if (n in 40..49) {
+        a += 'X'
+        a += 'L'
+    }
+    if (n in 50..59) a += 'L'
+    if (n in 60..89) {
+        val m = n / 10 - 5
+        a += 'L'
+        for (i in 1..m) a += 'X'
+    }
+    if (n in 90..99) {
+        a += 'X'
+        a += 'C'
+    }
+    return a
+}
+
+fun roman3(n: Int): String {
+    var a = ""
+    if (n in 100..399) {
+        val f = n / 100
+        for (i in 1..f) a += 'C'
+    }
+    if (n in 400..499) {
+        a += 'C'
+        a += 'D'
+    }
+    if (n in 500..599) a += 'D'
+    if (n in 600..899) {
+        val h = n / 100 - 5
+        a += 'D'
+        for (i in 1..h) a += 'C'
+    }
+    if (n in 900..999) {
+        a += 'C'
+        a += 'M'
+    }
+    return a
+}
+
+fun roman(n: Int): String {
+    var a = ""
+    if (n > 1000) {
+        val k = n / 1000
+        for (i in 1..k) a += 'M'
+        val b = roman3(n % 1000)
+        val c = roman2(n % 100)
+        val d = roman1(n % 10)
+        a = a + b + c + d
+    } else {
+        if (n in 100..999) {
+            val b = roman3(n % 1000)
+            val c = roman2(n % 100)
+            val d = roman1(n % 10)
+            a = a + b + c + d
+        } else {
+            if (n in 10..99) {
+                val c = roman2(n % 100)
+                val d = roman1(n % 10)
+                a = c + d
+            } else {
+                val d = roman1(n % 10)
+                a = d
+            }
+        }
+    }
+    return a
+}
 
 /**
  * Очень сложная
@@ -330,4 +422,125 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian1(n: Int): String{
+    var ch = ""
+    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+            "восемьдесят", "девяносто")
+    val f = listOf<String>("сто", "двести",
+            "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
+            "семнадцать", "восемнадцать", "девятнадцать")
+    if (n % 10 == 0 && n / 10 % 10 == 0) ch += f[n / 100 - 1] else {
+        if (n % 100 in 10..19) ch = f[n / 100 - 1] + ' ' + d[n % 10] else {
+            if (n / 10 % 10 == 0) ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1] else {
+                if (n % 10 == 0) ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] else
+                    ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
+            }
+        }
+    }
+    return ch
+}
+
+fun russian11(n: Int): String{
+    var ch = ""
+    val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+            "восемьдесят", "девяносто")
+    val f = listOf<String>("сто", "двести",
+            "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
+            "семнадцать", "восемнадцать", "девятнадцать")
+    if (n % 10 == 0 && n / 10 % 10 == 0) ch += f[n / 100 - 1] else {
+        if (n % 100 in 10..19) ch = f[n / 100 - 1] + ' ' + d[n % 10] else {
+            if (n / 10 % 10 == 0) ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1] else {
+                if (n % 10 == 0) ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] else
+                    ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
+            }
+        }
+    }
+    return ch
+}
+
+fun russian2(n: Int): String{
+    var ch = ""
+    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+            "восемьдесят", "девяносто")
+    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
+            "семнадцать", "восемнадцать", "девятнадцать")
+    if (n % 10 == 0 && n / 10 != 1) ch += e[n / 10 - 2] else {
+        if (n % 100 in 10..19) ch += d[n % 10] else {
+            ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
+        }
+    }
+    return ch
+}
+
+fun russian22(n: Int): String{
+    var ch = ""
+    val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+            "восемьдесят", "девяносто")
+    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
+            "семнадцать", "восемнадцать", "девятнадцать")
+    if (n % 10 == 0 && n / 10 != 1) ch += e[n / 10 - 2] else {
+        if (n in 10..19) ch += d[n % 10] else {
+            ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
+        }
+    }
+    return ch
+}
+
+fun russian3(n: Int): String {
+    var ch = ""
+    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    ch += c[n % 10 - 1]
+    return ch
+}
+
+fun russian31(n: Int): String {
+    var ch = ""
+    val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    ch += c[n % 10 - 1]
+    return ch
+}
+
+fun russian(n: Int): String {
+    var ch = ""
+    val b = listOf<String>(" тысяча", " тысяч", " тысячи")
+    if (n in 100000..999999) {
+        ch += russian11(n / 1000)
+        if (n / 1000 % 100 == 0 || n / 1000 % 100 in 5..9 || n / 1000 % 100 in 11..19) ch += b[1] else {
+            if (n % 10 == 1) ch += b[0] else ch += b[2]
+        }
+        if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
+            if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0) ch += ' ' + russian3(n % 1000)
+        }
+    } else {
+        if (n in 10000..99999) {
+            ch += russian22(n / 1000)
+            if (n / 1000 in 11..19 || n / 1000 % 100 in 5..9 || n / 1000 % 100 == 0) ch += b[1] else {
+                if (n % 10 == 1) ch += b[0] else ch += b[2]
+            }
+            if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
+                if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0) ch += ' ' + russian3(n % 1000)
+            }
+        } else {
+            if (n in 1000..9999) {
+                ch += russian31(n / 1000)
+                if (n / 1000 % 10 in 5..9 || n / 1000 % 10 == 0) ch += b[1] else {
+                    if (n % 10 == 1) ch += b[0] else ch += b[2]
+                    if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
+                        if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0) ch += ' ' + russian3(n % 1000)
+                    }
+                }
+            } else {
+                if (n % 1000 in 100..999) ch += russian1(n % 1000) else {
+                    if (n % 1000 in 10..99) ch += russian2(n % 1000) else ch += russian3(n % 1000)
+                }
+            }
+        }
+    }
+    return ch
+}
