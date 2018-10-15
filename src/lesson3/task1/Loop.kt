@@ -2,9 +2,7 @@
 package lesson3.task1
 
 import lesson1.task1.sqr
-import kotlin.math.PI
-import kotlin.math.sqrt
-import kotlin.math.abs
+import kotlin.math.*
 
 /**
  * Пример
@@ -107,10 +105,11 @@ fun fib(n: Int): Int {
 fun lcm(m: Int, n: Int): Int {
     var a = n
     var b = m
-    if (m >= n) {
-        while (a % b != 0) a += n
-    } else while (b % a != 0) b += m
-    return if (m > n) a else b
+    while (a != 0 && b != 0) {
+        if (a > b) a %= b else b %= a
+    }
+    val nod = a + b
+    return m * n / nod
 }
 
 /**
@@ -205,7 +204,7 @@ fun sin(x: Double, eps: Double): Double {
     var i = 1.0
     while (true) {
         number = -number * sqr(a) / (i + 1) / (i + 2)
-        if (Math.abs(number) < eps)
+        if (abs(number) < eps)
             break
         b += number
         i += 2

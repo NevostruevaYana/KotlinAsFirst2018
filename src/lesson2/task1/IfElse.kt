@@ -65,7 +65,7 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 fun ageDescription(age: Int): String = when {
-    (age % 10 in 5..9) || (age % 10 == 0) || (age % 100 in 11..19) -> "$age лет"
+    age % 10 in 5..9 || age % 10 == 0 || age % 100 in 11..19 -> "$age лет"
     age % 10 in 2..4 -> "$age года"
     age % 10 == 1 -> "$age год"
     else -> "0"
@@ -88,7 +88,7 @@ fun timeForHalfWay(t1: Double, v1: Double,
     val s4 = s / 2
     return if (s1 < s4) {
         val s5 = s4 - s1
-        if (s5 < s2) (t1 + s5 / v2) else (t1 + t2 + (s5 - s2) / v3)
+        if (s5 < s2) t1 + s5 / v2 else t1 + t2 + (s5 - s2) / v3
     } else s4 / v1
 }
 
@@ -104,9 +104,9 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int = when {
-    ((kingX == rookX1) || (kingY == rookY1)) && ((kingX == rookX2) || (kingY == rookY2)) -> 3
-    (kingX == rookX1) || (kingY == rookY1) -> 1
-    (kingX == rookX2) || (kingY == rookY2) -> 2
+    (kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2) -> 3
+    kingX == rookX1 || kingY == rookY1 -> 1
+    kingX == rookX2 || kingY == rookY2 -> 2
     else -> 0
 }
 
@@ -123,8 +123,8 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int = when {
-    (((kingX == rookX) || (kingY == rookY)) && ((abs(kingX - bishopX)) == abs(kingY - bishopY))) -> 3
-    ((kingX == rookX) || (kingY == rookY)) -> 1
+    (kingX == rookX || kingY == rookY) && (abs(kingX - bishopX) == abs(kingY - bishopY)) -> 3
+    kingX == rookX || kingY == rookY -> 1
     abs(kingX - bishopX) == abs(kingY - bishopY) -> 2
     else -> 0
 }
@@ -139,25 +139,13 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     val n = maxOf(a, b, c)
-    val n1: Double
-    val n2: Double
-    when {(n == a) -> {
-        n1 = c
-        n2 = b
-    }
-        (n == b) -> {
-            n1 = a
-            n2 = c
+    val m = a * a + b * b + c * c - n * n
+    return if (n > a + b + c - n) -1 else {
+        when {
+            m == n * n -> 1
+            m < n * n -> 2
+            else -> 0
         }
-        else -> {
-            n1 = a
-            n2 = b
-        }
-    }
-    return when {(n > n1 + n2) -> -1
-        (sqr(n) == n1 * n1 + n2 * n2) -> 1
-        (sqr(n) > n1 * n1 + n2 * n2) -> 2
-        else -> 0
     }
 }
 
