@@ -70,13 +70,11 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var m = abs(n)
     var a = 0
-    return if (m < 10) 1 else {
-        while (m > 0) {
-            m /= 10
-            a += 1
-        }
-        a
-    }
+    do {
+        m /= 10
+        a += 1
+    } while (m > 0)
+    return a
 }
 
 /**
@@ -109,7 +107,7 @@ fun lcm(m: Int, n: Int): Int {
         if (a > b) a %= b else b %= a
     }
     val nod = a + b
-    return m * n / nod
+    return m / nod * n
 }
 
 /**
@@ -118,11 +116,8 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    if (isPrime(n)) return n else {
-        var a = 2
-        for (i in 2..sqrt(n.toDouble()).toInt()) while (n % a != 0) a += 1
-        return a
-    }
+    for (i in 2..sqrt(n.toDouble()).toInt()) if (n % i == 0) return i
+    return n
 }
 
 /**
@@ -140,14 +135,9 @@ fun maxDivisor(n: Int): Int = n / minDivisor(n)
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    var a = m
-    var b = n
-    while (a != b)
-        if (a > b) a -= b else b -= a
-    return when {
-        a == 1 -> true
-        else -> false
-    }
+    if (m == 1 || n == 1) return true
+    if (max(m, n) % min(m, n) == 0) return false
+    return lcm(m, n) == m * n
 }
 
 /**
