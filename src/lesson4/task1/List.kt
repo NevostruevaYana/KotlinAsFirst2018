@@ -2,6 +2,7 @@
 
 package lesson4.task1
 
+import lesson3.task1.minDivisor
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
 
@@ -117,7 +118,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var s = 0.0
-    for (i in /*Doublev*/v) s += i * i
+    v.map { s += it * it }
     return sqrt(s)
 }
 
@@ -146,7 +147,6 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) return list
     val n = mean(list)
     for (i in 0 until list.size) list[i] -= n
     return list
@@ -161,7 +161,6 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Double>, b: List<Double>): Double {
     var s = 0.0
-    if (a.isEmpty()) return 0.0
     for (i in 0 until a.size) s += a[i] * b[i]
     return s
 }
@@ -175,12 +174,11 @@ fun times(a: List<Double>, b: List<Double>): Double {
  * Значение пустого многочлена равно 0.0 при любом x.
  */
 fun polynom(p: List<Double>, x: Double): Double {
-    if (p.isEmpty()) return 0.0
-    var s = p[0]
-    var c = x
-    for (i in 1 until p.size) {
-        s += p[i] * c
-        c *= x
+    var x1 = 1.0
+    var s = 0.0
+    p.forEach{
+        s += it * x1
+        x1 *= x
     }
     return s
 }
@@ -196,12 +194,9 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) return list
-    var s = list[0]
-    for (i in 1 until list.size) {
-        val k = list[i]
-        list[i] = list[i] + s
-        s += k
+    list.foldIndexed(0.0) { i, n, _ ->
+        list[i] += n
+        list[i]
     }
     return list
 }
@@ -214,20 +209,13 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    if (lesson3.task1.isPrime(n)) return listOf(n)
-    val a = mutableListOf<Int>()
-    var m = n
-    var i = 2
-    while (i <= m)
-        if (m % i == 0) {
-            a.add(i)
-            m /= i
-        } else {
-            i += 1
-            while (!lesson3.task1.isPrime(i))
-                i += 1
-        }
-    return a
+    val s = mutableListOf<Int>()
+    var i = n
+    while (i > 1) {
+        s.add(minDivisor(i))
+        i /= minDivisor(i)
+    }
+    return s
 }
 
 /**
@@ -247,10 +235,10 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
-    val list = ArrayList<Int>()
+    val list = mutableListOf<Int>()
     var m = n
     do {
-        list.addAll(0, listOf(m % base))
+        list.add(0, m % base)
         m /= base
     } while (m != 0)
     return list
@@ -264,16 +252,17 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String {
-    var list = ""
-    var m = n
-    if (n == 0) return "0"
-    while (m > 0) {
-        val k = m % base
-        list += if (k < 10) k.toString() else ('a' + k - 10)
-        m /= base
-    }
-    return list.reversed()
+fun convertToString(n: Int, base: Int): String{
+    val list = convert(n, base)
+    val a = "abcdefghijklmnopqrstuvwxyz"
+    val m = StringBuilder()
+    if (n == 0) m.append(n)
+    else
+        for (element in list) {
+            if (element < 10) m.append(element.toString())
+            else m.append(a[element - 10].toString())
+        }
+    return m.toString()
 }
 
 /**
@@ -321,95 +310,102 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman1(n: Int): String{
+fun roman1(n: Int): String {
     var a = ""
-    if (n in 1..3) for (i in 1..n) a += 'I'
-    if (n == 4) {
-        a += 'I'
-        a += 'V'
-    }
-    if (n == 5) a += 'V'
-    if (n in 6..8) {
-        a += 'V'
-        for (i in 1..n - 5) a += 'I'
-    }
-    if (n == 9) {
-        a += 'I'
-        a += 'X'
+    when (n) {
+        in 1..3 -> for (i in 1..n) a += 'I'
+        4 -> {
+            a += 'I'
+            a += 'V'
+        }
+        5 -> a += 'V'
+        in 6..8 -> {
+            a += 'V'
+            for (i in 1..n - 5) a += 'I'
+        }
+        9 -> {
+            a += 'I'
+            a += 'X'
+        }
     }
     return a
 }
 
 fun roman2(n: Int): String {
     var a = ""
-    if (n in 10..39) {
-        val y = n / 10
-        for (i in 1..y) a += 'X'
-    }
-    if (n in 40..49) {
-        a += 'X'
-        a += 'L'
-    }
-    if (n in 50..59) a += 'L'
-    if (n in 60..89) {
-        val m = n / 10 - 5
-        a += 'L'
-        for (i in 1..m) a += 'X'
-    }
-    if (n in 90..99) {
-        a += 'X'
-        a += 'C'
+    when (n) {
+        in 10..39 -> {
+            val y = n / 10
+            for (i in 1..y) a += 'X'
+        }
+        in 40..49 -> {
+            a += 'X'
+            a += 'L'
+        }
+        in 50..59 -> a += 'L'
+        in 60..89 -> {
+            val m = n / 10 - 5
+            a += 'L'
+            for (i in 1..m) a += 'X'
+        }
+        in 90..99 -> {
+            a += 'X'
+            a += 'C'
+        }
     }
     return a
 }
 
 fun roman3(n: Int): String {
     var a = ""
-    if (n in 100..399) {
-        val f = n / 100
-        for (i in 1..f) a += 'C'
-    }
-    if (n in 400..499) {
-        a += 'C'
-        a += 'D'
-    }
-    if (n in 500..599) a += 'D'
-    if (n in 600..899) {
-        val h = n / 100 - 5
-        a += 'D'
-        for (i in 1..h) a += 'C'
-    }
-    if (n in 900..999) {
-        a += 'C'
-        a += 'M'
+    when (n) {
+        in 100..399 -> {
+            val f = n / 100
+            for (i in 1..f) a += 'C'
+        }
+        in 400..499 -> {
+            a += 'C'
+            a += 'D'
+        }
+        in 500..599 -> a += 'D'
+        in 600..899 -> {
+            val h = n / 100 - 5
+            a += 'D'
+            for (i in 1..h) a += 'C'
+        }
+        in 900..999 -> {
+            a += 'C'
+            a += 'M'
+        }
     }
     return a
 }
 
 fun roman(n: Int): String {
     var a = ""
-    if (n > 1000) {
-        val k = n / 1000
-        for (i in 1..k) a += 'M'
-        val b = roman3(n % 1000)
-        val c = roman2(n % 100)
-        val d = roman1(n % 10)
-        a = a + b + c + d
-    } else {
-        if (n in 100..999) {
+    when (n) {
+        in 100..999 -> {
             val b = roman3(n % 1000)
             val c = roman2(n % 100)
             val d = roman1(n % 10)
             a = a + b + c + d
-        } else {
-            if (n in 10..99) {
-                val c = roman2(n % 100)
-                val d = roman1(n % 10)
-                a = c + d
-            } else {
-                val d = roman1(n % 10)
-                a = d
-            }
+        }
+        in 10..99 -> {
+            val c = roman2(n % 100)
+            val d = roman1(n % 10)
+            a = c + d
+        }
+        in 1..9 -> {
+            val d = roman1(n % 10)
+            a = d
+        }
+        else -> {
+            val k = n / 1000
+            for (i in 1..k) a += 'M'
+            val b = roman3(n % 1000)
+            val c = roman2(n % 100)
+            val d = roman1(n % 10)
+            a = a + b + c + d
         }
     }
     return a
@@ -422,7 +418,7 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian1(n: Int): String{
+fun russian1(n: Int): String {
     var ch = ""
     val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
@@ -431,18 +427,17 @@ fun russian1(n: Int): String{
             "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
             "семнадцать", "восемнадцать", "девятнадцать")
-    if (n % 10 == 0 && n / 10 % 10 == 0) ch += f[n / 100 - 1] else {
-        if (n % 100 in 10..19) ch = f[n / 100 - 1] + ' ' + d[n % 10] else {
-            if (n / 10 % 10 == 0) ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1] else {
-                if (n % 10 == 0) ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] else
-                    ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
-            }
-        }
+    when {
+        n % 10 == 0 && n / 10 % 10 == 0 -> ch += f[n / 100 - 1]
+        n % 100 in 10..19 -> ch = f[n / 100 - 1] + ' ' + d[n % 10]
+        n / 10 % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1]
+        n % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2]
+        else -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
     }
     return ch
 }
 
-fun russian11(n: Int): String{
+fun russian11(n: Int): String {
     var ch = ""
     val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
@@ -451,43 +446,42 @@ fun russian11(n: Int): String{
             "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
             "семнадцать", "восемнадцать", "девятнадцать")
-    if (n % 10 == 0 && n / 10 % 10 == 0) ch += f[n / 100 - 1] else {
-        if (n % 100 in 10..19) ch = f[n / 100 - 1] + ' ' + d[n % 10] else {
-            if (n / 10 % 10 == 0) ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1] else {
-                if (n % 10 == 0) ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] else
-                    ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
-            }
-        }
+    when {
+        n % 10 == 0 && n / 10 % 10 == 0 -> ch += f[n / 100 - 1]
+        n % 100 in 10..19 -> ch = f[n / 100 - 1] + ' ' + d[n % 10]
+        n / 10 % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1]
+        n % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2]
+        else -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
     }
     return ch
 }
 
-fun russian2(n: Int): String{
+fun russian2(n: Int): String {
     var ch = ""
     val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
             "восемьдесят", "девяносто")
     val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
             "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    if (n % 10 == 0 && n / 10 != 1) ch += e[n / 10 - 2] else {
-        if (n % 100 in 10..19) ch += d[n % 10] else {
-            ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
-        }
+    when {
+        n % 10 == 0 && n / 10 != 1 -> ch += e[n / 10 - 2]
+        n % 100 in 10..19 -> ch += d[n % 10]
+        else -> ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
     }
     return ch
 }
 
-fun russian22(n: Int): String{
+fun russian22(n: Int): String {
     var ch = ""
     val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
             "восемьдесят", "девяносто")
     val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
             "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    if (n % 10 == 0 && n / 10 != 1) ch += e[n / 10 - 2] else {
-        if (n in 10..19) ch += d[n % 10] else {
-            ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
-        }
+    when {
+        n % 10 == 0 && n / 10 != 1 -> ch += e[n / 10 - 2]
+        n % 100 in 10..19 -> ch += d[n % 10]
+        else -> ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
     }
     return ch
 }
