@@ -116,11 +116,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double {
-    var s = 0.0
-    v.map { s += it * it }
-    return sqrt(s)
-}
+fun abs(v: List<Double>): Double = sqrt(v.map { it * it }.sum())
 
 /**
  * Простая
@@ -176,8 +172,8 @@ fun times(a: List<Double>, b: List<Double>): Double {
 fun polynom(p: List<Double>, x: Double): Double {
     var x1 = 1.0
     var s = 0.0
-    p.forEach{
-        s += it * x1
+    for (i in 0 until p.size){
+        s += p[i] * x1
         x1 *= x
     }
     return s
@@ -310,75 +306,75 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman1(n: Int): String {
-    var a = ""
+fun roman1(n: Int): String = buildString {
+    val a = StringBuilder()
     when (n) {
-        in 1..3 -> for (i in 1..n) a += 'I'
+        in 1..3 -> for (i in 1..n) a.append('I')
         4 -> {
-            a += 'I'
-            a += 'V'
+            a.append('I')
+            a.append('V')
         }
-        5 -> a += 'V'
+        5 -> a.append('V')
         in 6..8 -> {
-            a += 'V'
-            for (i in 1..n - 5) a += 'I'
+            a.append('V')
+            for (i in 1..n - 5) a.append('I')
         }
         9 -> {
-            a += 'I'
-            a += 'X'
+            a.append('I')
+            a.append('X')
         }
     }
-    return a
+    return a.toString()
 }
 
-fun roman2(n: Int): String {
-    var a = ""
+fun roman2(n: Int): String = buildString {
+    val a = StringBuilder()
     when (n) {
         in 10..39 -> {
             val y = n / 10
-            for (i in 1..y) a += 'X'
+            for (i in 1..y) a.append('X')
         }
         in 40..49 -> {
-            a += 'X'
-            a += 'L'
+            a.append('X')
+            a.append('L')
         }
-        in 50..59 -> a += 'L'
+        in 50..59 -> a.append('L')
         in 60..89 -> {
             val m = n / 10 - 5
-            a += 'L'
-            for (i in 1..m) a += 'X'
+            a.append('L')
+            for (i in 1..m) a.append('X')
         }
         in 90..99 -> {
-            a += 'X'
-            a += 'C'
+            a.append('X')
+            a.append('C')
         }
     }
-    return a
+    return a.toString()
 }
 
 fun roman3(n: Int): String {
-    var a = ""
+    val a = StringBuilder()
     when (n) {
         in 100..399 -> {
             val f = n / 100
-            for (i in 1..f) a += 'C'
+            for (i in 1..f) a.append('C')
         }
         in 400..499 -> {
-            a += 'C'
-            a += 'D'
+            a.append('C')
+            a.append('D')
         }
-        in 500..599 -> a += 'D'
+        in 500..599 -> a.append('D')
         in 600..899 -> {
             val h = n / 100 - 5
-            a += 'D'
-            for (i in 1..h) a += 'C'
+            a.append('D')
+            for (i in 1..h) a.append('C')
         }
         in 900..999 -> {
-            a += 'C'
-            a += 'M'
+            a.append('C')
+            a.append('M')
         }
     }
-    return a
+    return a.toString()
 }
 
 fun roman(n: Int): String {
@@ -418,126 +414,40 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian1(n: Int): String {
-    var ch = ""
-    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
-            "восемьдесят", "девяносто")
-    val f = listOf<String>("сто", "двести",
-            "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
-    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
-            "семнадцать", "восемнадцать", "девятнадцать")
-    when {
-        n % 10 == 0 && n / 10 % 10 == 0 -> ch += f[n / 100 - 1]
-        n % 100 in 10..19 -> ch = f[n / 100 - 1] + ' ' + d[n % 10]
-        n / 10 % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1]
-        n % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2]
-        else -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
-    }
-    return ch
-}
-
-fun russian11(n: Int): String {
-    var ch = ""
-    val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
-            "восемьдесят", "девяносто")
-    val f = listOf<String>("сто", "двести",
-            "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
-    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
-            "семнадцать", "восемнадцать", "девятнадцать")
-    when {
-        n % 10 == 0 && n / 10 % 10 == 0 -> ch += f[n / 100 - 1]
-        n % 100 in 10..19 -> ch = f[n / 100 - 1] + ' ' + d[n % 10]
-        n / 10 % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + c[n % 10 - 1]
-        n % 10 == 0 -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2]
-        else -> ch = f[n / 100 - 1] + ' ' + e[n / 10 % 10 - 2] + ' ' + c[n % 10 - 1]
-    }
-    return ch
-}
-
-fun russian2(n: Int): String {
-    var ch = ""
-    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
-            "восемьдесят", "девяносто")
-    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
-            "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    when {
-        n % 10 == 0 && n / 10 != 1 -> ch += e[n / 10 - 2]
-        n % 100 in 10..19 -> ch += d[n % 10]
-        else -> ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
-    }
-    return ch
-}
-
-fun russian22(n: Int): String {
-    var ch = ""
-    val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
-            "восемьдесят", "девяносто")
-    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
-            "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    when {
-        n % 10 == 0 && n / 10 != 1 -> ch += e[n / 10 - 2]
-        n % 100 in 10..19 -> ch += d[n % 10]
-        else -> ch = e[n / 10 - 2] + ' ' + c[n % 10 - 1]
-    }
-    return ch
-}
-
-fun russian3(n: Int): String {
-    var ch = ""
-    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    ch += c[n % 10 - 1]
-    return ch
-}
-
-fun russian31(n: Int): String {
-    var ch = ""
-    val c = listOf<String>("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    ch += c[n % 10 - 1]
-    return ch
-}
 
 fun russian(n: Int): String {
-    var ch = ""
-    val b = listOf<String>(" тысяча", " тысяч", " тысячи")
-    if (n in 100000..999999) {
-        ch += russian11(n / 1000)
-        if (n / 1000 % 10 == 0 || n / 1000 % 10 in 5..9 || n / 1000 % 100 in 11..19) ch += b[1] else {
-            if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
+    val b = listOf<String>("одна тысяча", "две тысячи", "три тысячи", "четыре тысячи",
+            "пять тысяч", "шесть тысяч", "семь тысяч", "восемь тысяч", "девять тысяч")
+    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+            "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
+    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+            "восемьдесят", "девяносто")
+    val f = listOf<String>("сто", "двести",
+            "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val rus = StringBuilder()
+    val space = " "
+    if (n / 100000 > 0) rus.append(f[n / 100000 - 1] + space)
+    if (n / 1000 > 0) when (n / 10000 % 10) {
+        1 -> rus.append(d[n / 1000 % 10] + " тысяч")
+        0 -> {
+            if (n / 1000 % 10 == 0) rus.append("тысяч") else rus.append(b[n / 1000 % 10 - 1])
         }
-        if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
-            if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0)
-                ch += ' ' + russian3(n % 1000)
-        }
-    } else {
-        if (n in 10000..99999) {
-            ch += russian22(n / 1000)
-            if (n / 1000 in 11..19 || n / 1000 % 10 in 5..9 || n / 1000 % 10 == 0) ch += b[1] else {
-                if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
-            }
-            if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
-                if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0)
-                    ch += ' ' + russian3(n % 1000)
-            }
-        } else {
-            if (n in 1000..9999) {
-                ch += russian31(n / 1000)
-                if (n / 1000 % 10 in 5..9 || n / 1000 % 10 == 0) ch += b[1] else {
-                    if (n / 1000 % 10 == 1) ch += b[0] else ch += b[2]
-                }
-                if (n % 1000 in 100..999) ch += ' ' + russian1(n % 1000) else {
-                    if (n % 1000 in 10..99) ch += ' ' + russian2(n % 1000) else if (n % 1000 != 0)
-                        ch += ' ' + russian3(n % 1000)
-                }
-            } else {
-                if (n % 1000 in 100..999) ch += russian1(n % 1000) else {
-                    if (n % 1000 in 10..99) ch += russian2(n % 1000) else ch += russian3(n % 1000)
-                }
-            }
+        else -> {
+            rus.append(e[n / 10000 % 10 - 2] + space)
+            if (n / 1000 % 10 > 0) rus.append(b[n / 1000 % 10 - 1]) else rus.append("тысяч")
         }
     }
-    return ch
+    if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..9) rus.append(space)
+    if (n / 100 % 10 > 0) rus.append(f[n / 100 % 10 - 1])
+    if (n / 10 % 10 > 0) {
+        if (n !in 10..99) rus.append(space)
+        when (n / 10 % 10) {
+            1 -> rus.append(d[n % 10])
+            else -> rus.append(e[n / 10 % 10 - 2])
+        }
+    }
+    if (n % 10 > 0 && n / 10 % 10 != 1) rus.append(space + c[n % 10 - 1])
+    return rus.toString()
 }
+
