@@ -438,7 +438,7 @@ fun russian(n: Int): String {
             if (n / 1000 % 10 > 0) rus.append(b[n / 1000 % 10 - 1]) else rus.append("тысяч")
         }
     }
-    if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..9) rus.append(space)
+    if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..99) rus.append(space)
     if (n / 100 % 10 > 0) rus.append(f[n / 100 % 10 - 1])
     if (n / 10 % 10 > 0) {
         if (n !in 10..99) rus.append(space)
