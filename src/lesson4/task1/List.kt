@@ -447,7 +447,7 @@ fun russian(n: Int): String {
             else -> rus.append(e[n / 10 % 10 - 2])
         }
     }
-    if (n % 10 > 0 && n / 10 % 10 != 1) rus.append(space + c[n % 10 - 1])
+    if (n % 10 > 0 && n / 10 % 10 != 1) if (n > 9) rus.append(space + c[n % 10 - 1]) else rus.append(c[n % 10 - 1])
     return rus.toString()
 }
 
