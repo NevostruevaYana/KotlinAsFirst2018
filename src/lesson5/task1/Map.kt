@@ -226,12 +226,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) = a.keys.r
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String>{
-    val res = mutableListOf<String>()
-    for (i in a) if (i in b && i !in res) res.add(i)
-    return res
-}
-
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter { it in b }
 
 /**
  * Средняя
@@ -242,11 +237,9 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String>{
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean{
-    for (i in 0 until word.length)
-        if (word[i].toLowerCase() !in chars && word[i].toUpperCase() !in chars)
-            return false
-    return true
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val char = chars.map { it.toLowerCase() }
+    return word.toLowerCase().all { it in char }
 }
 
 /**
@@ -261,11 +254,8 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean{
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> {
-    val a = mutableMapOf<String, Int>()
-    list.forEach { elem -> if (a[elem] == null) a[elem] = 1 else a[elem] = (a[elem] ?: 0) + 1 }
-    return a.filter { (_, number) -> number > 1 }
-}
+fun extractRepeats(list: List<String>): Map<String, Int> =
+        list.groupingBy { it }.eachCount().filter { (_, count) -> count != 1 }
 
 /**
  * Средняя
@@ -277,12 +267,11 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    var s = false
-    for (i in words) if (words.contains(i.reversed())) {
-        s = true
-        break
-    }
-    return s
+    val a = words.map { it.toList().sorted().joinToString() }
+    for (i in 0 until words.size - 1)
+        for (j in i + 1 until words.size)
+            if (a[i] == a[j]) return true
+    return false
 }
 
 /**
