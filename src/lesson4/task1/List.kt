@@ -172,7 +172,7 @@ fun times(a: List<Double>, b: List<Double>): Double {
 fun polynom(p: List<Double>, x: Double): Double {
     var x1 = 1.0
     var s = 0.0
-    for (i in 0 until p.size){
+    for (i in 0 until p.size) {
         s += p[i] * x1
         x1 *= x
     }
@@ -248,7 +248,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String{
+fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
     val a = "abcdefghijklmnopqrstuvwxyz"
     val m = StringBuilder()
@@ -297,6 +297,7 @@ fun decimalFromString(str: String, base: Int): Int {
     }
     return a
 }
+//чтобы вызвать предыдущую функцию все равно придется проходить по всем элементам, чтобы заменить буквы
 
 /**
  * Сложная
@@ -416,38 +417,38 @@ fun roman(n: Int): String {
  */
 
 fun russian(n: Int): String {
-    val b = listOf<String>("одна тысяча", "две тысячи", "три тысячи", "четыре тысячи",
+    val thousands = listOf<String>("одна тысяча", "две тысячи", "три тысячи", "четыре тысячи",
             "пять тысяч", "шесть тысяч", "семь тысяч", "восемь тысяч", "девять тысяч")
-    val c = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val d = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+    val units = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val ten = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
             "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    val e = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+    val teen = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
             "восемьдесят", "девяносто")
-    val f = listOf<String>("сто", "двести",
+    val hundred = listOf<String>("сто", "двести",
             "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val rus = StringBuilder()
     val space = " "
-    if (n / 100000 > 0) rus.append(f[n / 100000 - 1] + space)
+    if (n / 100000 > 0) rus.append(hundred[n / 100000 - 1] + space)
     if (n / 1000 > 0) when (n / 10000 % 10) {
-        1 -> rus.append(d[n / 1000 % 10] + " тысяч")
+        1 -> rus.append(ten[n / 1000 % 10] + space + "тысяч")
         0 -> {
-            if (n / 1000 % 10 == 0) rus.append("тысяч") else rus.append(b[n / 1000 % 10 - 1])
+            if (n / 1000 % 10 == 0) rus.append("тысяч") else rus.append(thousands[n / 1000 % 10 - 1])
         }
         else -> {
-            rus.append(e[n / 10000 % 10 - 2] + space)
-            if (n / 1000 % 10 > 0) rus.append(b[n / 1000 % 10 - 1]) else rus.append("тысяч")
+            rus.append(teen[n / 10000 % 10 - 2] + space)
+            if (n / 1000 % 10 > 0) rus.append(thousands[n / 1000 % 10 - 1]) else rus.append("тысяч")
         }
     }
     if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..99) rus.append(space)
-    if (n / 100 % 10 > 0) rus.append(f[n / 100 % 10 - 1])
+    if (n / 100 % 10 > 0) rus.append(hundred[n / 100 % 10 - 1])
     if (n / 10 % 10 > 0) {
         if (n !in 10..99) rus.append(space)
         when (n / 10 % 10) {
-            1 -> rus.append(d[n % 10])
-            else -> rus.append(e[n / 10 % 10 - 2])
+            1 -> rus.append(ten[n % 10])
+            else -> rus.append(teen[n / 10 % 10 - 2])
         }
     }
-    if (n % 10 > 0 && n / 10 % 10 != 1) if (n > 9) rus.append(space + c[n % 10 - 1]) else rus.append(c[n % 10 - 1])
+    if (n % 10 > 0 && n / 10 % 10 != 1) if (n > 9) rus.append(space + units[n % 10 - 1]) else rus.append(units[n % 10 - 1])
     return rus.toString()
 }
 
