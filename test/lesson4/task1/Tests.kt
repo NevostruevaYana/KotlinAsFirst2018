@@ -195,7 +195,6 @@ class Tests {
     @Test
     @Tag("Normal")
     fun decimal() {
-        assertEquals(1, decimal(listOf(1), 2))
         assertEquals(100, decimal(listOf(1, 2, 1, 0), 4))
         assertEquals(250, decimal(listOf(1, 3, 12), 14))
         assertEquals(1000, decimal(listOf(2, 14, 12), 19))
@@ -204,7 +203,6 @@ class Tests {
     @Test
     @Tag("Hard")
     fun decimalFromString() {
-        assertEquals(1, decimalFromString("1", 2))
         assertEquals(100, decimalFromString("1210", 4))
         assertEquals(250, decimalFromString("13c", 14))
         assertEquals(1000, decimalFromString("2ec", 19))
@@ -232,5 +230,9 @@ class Tests {
         assertEquals("двести тысяч два", russian(200002))
         assertEquals("девятьсот тысяч", russian(900000))
         assertEquals("двенадцать", russian(12))
+        assertEquals("восемьсот сорок пять тысяч девятьсот одиннадцать", russian(845911))
+        assertEquals("тридцать пять тысяч одиннадцать", russian(35011))
+        assertEquals("три", russian(3))
+        assertEquals("восемьсот пятьдесят пять тысяч пятьдесят два", russian(855052))
     }
 }
