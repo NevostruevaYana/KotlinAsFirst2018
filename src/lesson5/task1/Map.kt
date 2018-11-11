@@ -140,11 +140,22 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = a.all 
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = stockPrices.groupingBy { it.first }
-        .fold(0.0 to 0) { (price, count), pair ->
-            (price + pair.second) to (count + 1) }.mapValues { (_, priceAndCount) ->
-            priceAndCount.first / priceAndCount.second
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double>  {
+    val res = mutableMapOf<String, Double>()
+    val repeats = mutableMapOf<String, Int>()
+    for ((name, price) in stockPrices) {
+        if (res[name] != null) {
+            res[name] = res[name]!! + price
+            repeats[name] = repeats[name]!! + 1
+        } else {
+            res[name] = price
+            repeats[name] = 1
+        }
+    }
+    res.forEach { (name, price) -> res[name] = price / (repeats[name] ?: 1) }
+    return res
 }
+
 
 /**
  * Средняя
@@ -214,7 +225,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) = a.keys.r
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter { name -> b.contains(name) }
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter { name -> b.contains(name) }.toSet().toList()
 
 /**
  * Средняя
