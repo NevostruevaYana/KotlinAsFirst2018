@@ -93,6 +93,7 @@ fun dateStrToDigit(str: String): String {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
+
 fun dateDigitToStr(digital: String): String {
     val map = mapOf(1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля", 5 to "мая", 6 to "июня",
             7 to "июля", 8 to "августа", 9 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря")
@@ -101,8 +102,11 @@ fun dateDigitToStr(digital: String): String {
         val day = data[0].toIntOrNull()
         val year = data[2].toIntOrNull()
         val monthInt = data[1].toIntOrNull()
-        val month = map[monthInt] ?: ""
-        if (day == null || year == null || month == "" || monthInt !in 1..12) return "" else
+        if (day == null || year == null || monthInt == null) return ""
+        if (monthInt !in 1..12) return ""
+        if (day !in 1..daysInMonth(monthInt, year)) return ""
+        val month = map[monthInt]
+        if (month == "") return "" else
             return String.format("%d %s %d", day, month, year)
     }
 }
@@ -187,6 +191,7 @@ fun plusMinus(expression: String): Int {
     val length = str.size
     var res = 0
     var sign = '+'
+    if (expression == "") throw IllegalArgumentException()
     for (i in 0 until length) {
         if (i % 2 == 0) {
             for (j in 0 until str[i].length)
