@@ -176,10 +176,10 @@ fun bestLongJump(jumps: String): Int {
     val length = str.size
     var res = -1
     for (i in 0 until length) {
-        if (str[i] != "-" && str[i] != "%" && !number(str[i]))
+        if (str[i] != "-" && str[i] != "%" && !number(str[i]) && str[i] != "")
             return -1
         else
-            if (str[i] != "-" && str[i] != "%")
+            if (str[i] != "-" && str[i] != "%" && str[i] != "")
                 if (res < str[i].toInt()) res = str[i].toInt()
     }
     return res
@@ -223,7 +223,9 @@ fun bestHighJump(jumps: String): Int {
             if (!symbols(str[i]))
                 return -1
             else
-                if (symbolPlus(str[i])) res = str[i - 1].toInt()
+                if (symbolPlus(str[i]))
+                    if (res < str[i - 1].toInt())
+                        res = str[i - 1].toInt()
     }
     return res
 }
