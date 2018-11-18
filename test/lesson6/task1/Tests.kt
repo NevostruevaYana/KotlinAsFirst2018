@@ -72,20 +72,19 @@ class Tests {
         assertEquals(-1, bestLongJump("% - - % -"))
         assertEquals(754, bestLongJump("700 717 707 % 754"))
         assertEquals(-1, bestLongJump("700 + 700"))
-
+        assertEquals(2147483647, bestLongJump("1168944873 2147483647 -  % 1 -  % 2147483647 2147483647 - 2147483647 0 45943859 -"))
     }
 
     @Test
     @Tag("Hard")
     fun bestHighJump() {
-        assertEquals(226, bestHighJump("226 +"))
-        assertEquals(-1, bestHighJump("???"))
-        assertEquals(230, bestHighJump("220 + 224 %+ 228 %- 230 + 232 %%- 234 %"))
+        assertEquals(878524193, bestHighJump("147483648 %%- 147483647 %%+ 147483647 %+ 147483647 %%- 147483648 + 59502032 %%- 147483648 + 143622343 %- 0 + 0 %+ 147483648 %+ 93633087 %- 899042451 %%- 147483648 %+ 804876203 %%+ 147483647 %- 81991004 %%+ 593832442 + 147483648 + 0 %%- 1 + 616279957 + 147483647 + 1 %+ 502463204 %%+ 17364532 %%- 147483647 + 838738849 + 0 %- 0 %+ 147483647 %- 866921088 %+ 147483647 %%+ 1 %%- 1 %- 0 %+ 1 + 147483648 %+ 516685274 %%+ 243482274 %%+ 147483648 %%+ 0 + 147483648 %- 462852149 %+ 147483648 %%- 147483647 %%- 1 %+ 0 + 267824815 %%- 1 + 1 %- 147483648 %+ 1 %+ 147483647 %%- 147483647 %- 0 %%- 803382949 %- 515185187 %%- 561077597 %- 147483648 %%+ 106657170 %%- 0 + 0 %- 147483647 %%- 708208992 %- 147483647 %+ 779127281 %- 107002891 + 1 %+ 431897156 + 1 %- 466962902 %%- 0 %+ 147483648 %%+ 147483647 + 1 %%- 147483648 %+ 1 %%- 288171716 + 147483648 %- 512882312 %%+ 327010373 %%- 1 %- 147483648 %%+ 147483647 %- 147483647 %+ 502173014 + 147483647 %+ 0 %+ 147483647 %+ 147483648 %%- 0 %%+ 759869442 %%+ 153941240 %- 0 + 0 %%+ 1 %%+ 32099209 %%- 147483647 + 802014045 %%- 623716826 %+ 0 %- 147483648 %+ 147483647 %%- 147483647 %+ 79349513 %- 1 %+ 1 %+ 204547856 %%- 612348572 %- 147483648 + 0 + 32750669 %- 1 %+ 185678520 %- 1 %- 636046865 %- 147483647 %+ 147483647 %+ 147483648 %- 0 + 1 + 380441688 %+ 147483647 %%- 353137332 %+ 147483648 %%- 1 + 1 %+ 557665417 + 1 + 147483648 %- 527745117 %+ 0 %+ 147483647 + 0 %- 334146688 %%- 147483648 %+ 147483647 + 0 + 147483648 + 0 %+ 878524193 %%+ 625469136 %+ 147483648 %- 153891688 %+ 147483647 %- 147483647 %- 614380997 %- 104920316 %+ 147483647 %+ 404619232 %+ 269977360 %- 1 %%- 0 %%+ 0 %- 695555219 + 147483647 %%- 1 %+ 712489325 +"))
     }
 
     @Test
     @Tag("Hard")
     fun plusMinus() {
+        assertThrows(IllegalArgumentException::class.java) { plusMinus(" ") }
         assertEquals(0, plusMinus("0"))
         assertEquals(4, plusMinus("2 + 2"))
         assertEquals(6, plusMinus("2 + 31 - 40 + 13"))
@@ -95,6 +94,7 @@ class Tests {
         assertThrows(IllegalArgumentException::class.java) { plusMinus("4 - -2") }
         assertThrows(IllegalArgumentException::class.java) { plusMinus("44 - - 12") }
         assertThrows(IllegalArgumentException::class.java) { plusMinus("4 - + 12") }
+        assertThrows(IllegalArgumentException::class.java) { plusMinus(" r[?7UkL?st.okg/n") }
     }
 
     @Test
@@ -109,7 +109,6 @@ class Tests {
     @Test
     @Tag("Hard")
     fun mostExpensive() {
-        assertEquals("", mostExpensive(""))
         assertEquals("Курица", mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9"))
         assertEquals("Вино", mostExpensive("Вино 255.0"))
     }
@@ -117,8 +116,8 @@ class Tests {
     @Test
     @Tag("Hard")
     fun fromRoman() {
-        assertEquals(1, fromRoman("I"))
         assertEquals(3000, fromRoman("MMM"))
+        assertEquals(934, fromRoman("CMXXXIV"))
         assertEquals(1978, fromRoman("MCMLXXVIII"))
         assertEquals(694, fromRoman("DCXCIV"))
         assertEquals(49, fromRoman("XLIX"))
