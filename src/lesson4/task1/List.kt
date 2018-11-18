@@ -4,6 +4,7 @@ package lesson4.task1
 
 import lesson3.task1.minDivisor
 import lesson1.task1.discriminant
+import kotlin.math.absoluteValue
 import kotlin.math.sqrt
 
 /**
@@ -96,7 +97,8 @@ fun squares(vararg array: Int) = squares(array.toList()).toTypedArray()
 fun isPalindrome(str: String): Boolean {
     val lowerCase = str.toLowerCase().filter { it != ' ' }
     for (i in 0..lowerCase.length / 2) {
-        if (lowerCase[i] != lowerCase[lowerCase.length - i - 1]) return false
+        if (lowerCase[i] != lowerCase[lowerCase.length - i - 1])
+            return false
     }
     return true
 }
@@ -124,7 +126,8 @@ fun abs(v: List<Double>): Double = sqrt(v.map { it * it }.sum())
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
 fun mean(list: List<Double>): Double {
-    if (list.isEmpty()) return 0.0
+    if (list.isEmpty())
+        return 0.0
     var s = 0.0
     var n = 0
     for (i in list) {
@@ -144,7 +147,8 @@ fun mean(list: List<Double>): Double {
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val n = mean(list)
-    for (i in 0 until list.size) list[i] -= n
+    for (i in 0 until list.size)
+        list[i] -= n
     return list
 }
 
@@ -157,7 +161,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Double>, b: List<Double>): Double {
     var s = 0.0
-    for (i in 0 until a.size) s += a[i] * b[i]
+    for (i in 0 until a.size)
+        s += a[i] * b[i]
     return s
 }
 
@@ -255,8 +260,10 @@ fun convertToString(n: Int, base: Int): String {
     if (n == 0) m.append(n)
     else
         for (element in list) {
-            if (element < 10) m.append(element.toString())
-            else m.append(a[element - 10].toString())
+            if (element < 10)
+                m.append(element.toString())
+            else
+                m.append(a[element - 10].toString())
         }
     return m.toString()
 }
@@ -271,8 +278,12 @@ fun convertToString(n: Int, base: Int): String {
 fun decimal(digits: List<Int>, base: Int): Int {
     var a = 0
     var st = 1
-    digits.reversed().forEach {
-        a += it * st
+    val list = digits.reversed()
+    for (i in 0 until digits.size) {
+        if (list[i] > 35)
+            a += (list[i] - 39) * st
+        else
+            a += list[i] * st
         st *= base
     }
     return a
@@ -288,16 +299,9 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    var a = 0
-    var st = 1
-    str.reversed().forEach {
-        val k = if (it <= '9') it - '0' else (it + 10 - 'a')
-        a += k * st
-        st *= base
-    }
-    return a
+    val st = str.toList()
+    return decimal(st.map { it.toInt() - 48 }, base)
 }
-//чтобы вызвать предыдущую функцию все равно придется проходить по всем элементам, чтобы заменить буквы
 
 /**
  * Сложная
@@ -307,105 +311,25 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman1(n: Int): String = buildString {
-    val a = StringBuilder()
-    when (n) {
-        in 1..3 -> for (i in 1..n) a.append('I')
-        4 -> {
-            a.append('I')
-            a.append('V')
-        }
-        5 -> a.append('V')
-        in 6..8 -> {
-            a.append('V')
-            for (i in 1..n - 5) a.append('I')
-        }
-        9 -> {
-            a.append('I')
-            a.append('X')
-        }
-    }
-    return a.toString()
-}
-
-fun roman2(n: Int): String = buildString {
-    val a = StringBuilder()
-    when (n) {
-        in 10..39 -> {
-            val y = n / 10
-            for (i in 1..y) a.append('X')
-        }
-        in 40..49 -> {
-            a.append('X')
-            a.append('L')
-        }
-        in 50..59 -> a.append('L')
-        in 60..89 -> {
-            val m = n / 10 - 5
-            a.append('L')
-            for (i in 1..m) a.append('X')
-        }
-        in 90..99 -> {
-            a.append('X')
-            a.append('C')
-        }
-    }
-    return a.toString()
-}
-
-fun roman3(n: Int): String {
-    val a = StringBuilder()
-    when (n) {
-        in 100..399 -> {
-            val f = n / 100
-            for (i in 1..f) a.append('C')
-        }
-        in 400..499 -> {
-            a.append('C')
-            a.append('D')
-        }
-        in 500..599 -> a.append('D')
-        in 600..899 -> {
-            val h = n / 100 - 5
-            a.append('D')
-            for (i in 1..h) a.append('C')
-        }
-        in 900..999 -> {
-            a.append('C')
-            a.append('M')
-        }
-    }
-    return a.toString()
-}
 
 fun roman(n: Int): String {
-    var a = ""
-    when (n) {
-        in 100..999 -> {
-            val b = roman3(n % 1000)
-            val c = roman2(n % 100)
-            val d = roman1(n % 10)
-            a = a + b + c + d
-        }
-        in 10..99 -> {
-            val c = roman2(n % 100)
-            val d = roman1(n % 10)
-            a = c + d
-        }
-        in 1..9 -> {
-            val d = roman1(n % 10)
-            a = d
-        }
-        else -> {
-            val k = n / 1000
-            for (i in 1..k) a += 'M'
-            val b = roman3(n % 1000)
-            val c = roman2(n % 100)
-            val d = roman1(n % 10)
-            a = a + b + c + d
+    val roman = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
+    val decimal = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
+    val res = StringBuilder()
+    var m = n % 1000
+    if (n > 1000)
+        for (i in 1..n / 1000)
+            res.append(roman[12])
+    while (m > 0) {
+        for (i in 0 until decimal.size) {
+            if (m < decimal[i]) {
+                m -= decimal[i - 1]
+                res.append(roman[i - 1])
+                break
+            }
         }
     }
-    return a
+    return res.toString()
 }
 
 /**
@@ -428,27 +352,38 @@ fun russian(n: Int): String {
             "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val rus = StringBuilder()
     val space = " "
-    if (n / 100000 > 0) rus.append(hundred[n / 100000 - 1] + space)
-    if (n / 1000 > 0) when (n / 10000 % 10) {
-        1 -> rus.append(ten[n / 1000 % 10] + space + "тысяч")
-        0 -> {
-            if (n / 1000 % 10 == 0) rus.append("тысяч") else rus.append(thousands[n / 1000 % 10 - 1])
+    if (n / 100000 > 0)
+        rus.append(hundred[n / 100000 - 1] + space)
+    if (n / 1000 > 0)
+        when (n / 10000 % 10) {
+            1 -> rus.append(ten[n / 1000 % 10] + space + "тысяч")
+            0 -> {
+                if (n / 1000 % 10 == 0) rus.append("тысяч") else rus.append(thousands[n / 1000 % 10 - 1])
+            }
+            else -> {
+                rus.append(teen[n / 10000 % 10 - 2] + space)
+                if (n / 1000 % 10 > 0)
+                    rus.append(thousands[n / 1000 % 10 - 1])
+                else
+                    rus.append("тысяч")
+            }
         }
-        else -> {
-            rus.append(teen[n / 10000 % 10 - 2] + space)
-            if (n / 1000 % 10 > 0) rus.append(thousands[n / 1000 % 10 - 1]) else rus.append("тысяч")
-        }
-    }
-    if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..99) rus.append(space)
-    if (n / 100 % 10 > 0) rus.append(hundred[n / 100 % 10 - 1])
+    if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..99)
+        rus.append(space)
+    if (n / 100 % 10 > 0)
+        rus.append(hundred[n / 100 % 10 - 1])
     if (n / 10 % 10 > 0) {
-        if (n !in 10..99) rus.append(space)
+        if (n !in 10..99)
+            rus.append(space)
         when (n / 10 % 10) {
             1 -> rus.append(ten[n % 10])
             else -> rus.append(teen[n / 10 % 10 - 2])
         }
     }
-    if (n % 10 > 0 && n / 10 % 10 != 1) if (n > 9) rus.append(space + units[n % 10 - 1]) else rus.append(units[n % 10 - 1])
+    if (n % 10 > 0 && n / 10 % 10 != 1)
+        if (n > 9)
+            rus.append(space + units[n % 10 - 1])
+        else rus.append(units[n % 10 - 1])
     return rus.toString()
 }
 

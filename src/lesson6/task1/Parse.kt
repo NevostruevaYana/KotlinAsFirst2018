@@ -163,7 +163,27 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun number(str: String): Boolean {
+    var f = true
+    for (i in 0 until str.length) {
+        if (str[i] !in '0'..'9') f = false
+    }
+    return f
+}
+
+fun bestLongJump(jumps: String): Int {
+    val str = jumps.split(" ")
+    val length = str.size
+    var res = -1
+    for (i in 0 until length) {
+        if (str[i] != "-" && str[i] != "%" && !number(str[i]))
+            return -1
+        else
+            if (str[i] != "-" && str[i] != "%")
+                if (res < str[i].toInt()) res = str[i].toInt()
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -175,7 +195,38 @@ fun bestLongJump(jumps: String): Int = TODO()
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun symbols(str: String): Boolean {
+    var f = true
+    for (i in 0 until str.length) {
+        if (str[i] != '+' && str[i] != '-' && str[i] != '%') f = false
+    }
+    return f
+}
+
+fun symbolPlus(str: String): Boolean {
+    var f = false
+    for (i in 0 until str.length) {
+        if (str[i] == '+') f = true
+    }
+    return f
+}
+
+fun bestHighJump(jumps: String): Int {
+    val str = jumps.split(" ")
+    val length = str.size
+    var res = -1
+    if (length % 2 == 1) return -1
+    for (i in 0 until length) {
+        if (i % 2 == 0) {
+            if (!number(str[i])) return -1
+        } else
+            if (!symbols(str[i]))
+                return -1
+            else
+                if (symbolPlus(str[i])) res = str[i - 1].toInt()
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -235,7 +286,42 @@ fun firstDuplicateIndex(str: String): Int {
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun price(str: String): Boolean {
+    var f = true
+    for (i in 0 until str.length) {
+        if (str[i] != '.' && str[i] !in '0'..'9') f = false
+    }
+    return f
+}
+
+fun word(str: String): Boolean {
+    var f = true
+    for (i in 0 until str.length) {
+        if (str[i] !in 'а'..'я') f = false
+    }
+    return f
+}
+
+fun mostExpensive(description: String): String {
+    val list = description.split("; ").joinToString(separator = " ").split(" ")
+    val length = list.size
+    var cost = 0.0
+    var k = -1
+    if (length % 2 == 1) return ""
+    for (i in 0 until length) {
+        if (i % 2 == 0) {
+            if (!word(list[i].toLowerCase())) return ""
+        } else
+            if (!price(list[i]))
+                return ""
+            else
+                if (cost < list[i].toDouble()) {
+                    cost = list[i].toDouble()
+                    k = i - 1
+                }
+    }
+    return list[k]
+}
 
 /**
  * Сложная
@@ -248,7 +334,39 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val romanNumerals = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
+    val decimalDigits = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
+    val length = roman.length
+    val index = StringBuilder()
+    var res = 0
+    for (i in 0 until length)
+        if (roman[i] !in setOf('I', 'V', 'X', 'L', 'C', 'D', 'M')) return -1
+    for (i in 0 until length - 4)
+        if (roman[i] == roman[i + 1] && roman[i] == roman[i + 2] && roman[i] == roman[i + 3]) return -1
+    for (i in 0 until length - 1) {
+        if (romanNumerals.indexOf(roman[i].toString()) < romanNumerals.indexOf(roman[i + 1].toString()))
+            index.append(i.toString())
+    }
+    val listIndex = index.toList().map { it.toInt() - 48 }
+    for (i in 0 until length - 1) {
+        if (i in listIndex) {
+            val a = roman[i].toString() + roman[i + 1].toString()
+            res += decimalDigits[romanNumerals.indexOf(a)]
+        } else {
+            if (i != 0) {
+                if (i - 1 !in listIndex)
+                    if (romanNumerals.indexOf(roman[i].toString()) >= romanNumerals.indexOf(roman[i + 1].toString()))
+                        res += decimalDigits[romanNumerals.indexOf(roman[i].toString())]
+            } else
+                res += decimalDigits[romanNumerals.indexOf(roman[i].toString())]
+        }
+
+    }
+    if (romanNumerals.indexOf(roman[length - 2].toString()) >= romanNumerals.indexOf(roman[length - 1].toString()))
+        res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
+    return res
+}
 
 /**
  * Очень сложная
