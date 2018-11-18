@@ -263,7 +263,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> =
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean = chars.toString() ==
-        word.toLowerCase().toSet().sorted().toString()
+        word.toLowerCase().toSet().sorted().toString() || word == ""
 
 /**
  * Средняя

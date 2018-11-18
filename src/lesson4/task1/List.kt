@@ -281,10 +281,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
     var st = 1
     val list = digits.reversed()
     for (i in 0 until digits.size) {
-        if (list[i] > 35)
-            a += (list[i] - 39) * st
-        else
-            a += list[i] * st
+        a += list[i] * st
         st *= base
     }
     return a
@@ -301,7 +298,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val st = str.toList()
-    return decimal(st.map { it.toInt() - 48 }, base)
+    return decimal(st.map { if (it in '0'..'9') it.toInt() - 48 else it.toInt() - 87 }, base)
 }
 
 /**
