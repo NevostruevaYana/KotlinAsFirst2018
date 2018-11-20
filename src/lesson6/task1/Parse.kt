@@ -244,17 +244,24 @@ fun plusMinus(expression: String): Int {
     val length = str.size
     var res = 0
     var sign = '+'
-    if (expression == "") throw IllegalArgumentException()
+    if (length % 2 == 0 || length == 1) throw IllegalArgumentException()
     for (i in 0 until length) {
         if (i % 2 == 0) {
             for (j in 0 until str[i].length)
                 if (str[i][j] !in '0'..'9')
                     throw IllegalArgumentException()
-            if (sign == '+') res += str[i].toInt() else res -= str[i].toInt()
+            if
+                    (sign == '+') res += str[i].toInt()
+            else
+                res -= str[i].toInt()
         } else
             if (str[i] != "+" && str[i] != "-")
                 throw IllegalArgumentException()
-            else if (str[i] == "-") sign = '-' else sign = '+'
+            else
+                if (str[i] == "-")
+                    sign = '-'
+                else
+                    sign = '+'
     }
     return res
 }
@@ -296,14 +303,6 @@ fun price(str: String): Boolean {
     return f
 }
 
-fun word(str: String): Boolean {
-    var f = true
-    for (i in 0 until str.length) {
-        if (str[i] !in 'а'..'я') f = false
-    }
-    return f
-}
-
 fun mostExpensive(description: String): String {
     val list = description.split("; ").joinToString(separator = " ").split(" ")
     val length = list.size
@@ -311,16 +310,13 @@ fun mostExpensive(description: String): String {
     var k = -1
     if (length % 2 == 1) return ""
     for (i in 0 until length) {
-        if (i % 2 == 0) {
-            if (!word(list[i].toLowerCase())) return ""
-        } else
-            if (!price(list[i]))
-                return ""
-            else
-                if (cost < list[i].toDouble()) {
-                    cost = list[i].toDouble()
-                    k = i - 1
-                }
+        if (!price(list[i]))
+            return ""
+        else
+            if (cost < list[i].toDouble()) {
+                cost = list[i].toDouble()
+                k = i - 1
+            }
     }
     return list[k]
 }
