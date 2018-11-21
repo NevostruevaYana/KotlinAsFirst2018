@@ -298,7 +298,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val st = str.toList()
-    return decimal(st.map { if (it in '0'..'9') it.toInt() - 48 else it.toInt() - 87 }, base)
+    return decimal(st.map { if (it in '0'..'9') it.toInt() - '0'.toInt() else it.toInt() - 'a'.toInt() + 10 }, base)
 }
 
 /**

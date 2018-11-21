@@ -244,7 +244,7 @@ fun plusMinus(expression: String): Int {
     val length = str.size
     var res = 0
     var sign = '+'
-    if (length % 2 == 0 || length == 1) throw IllegalArgumentException()
+    if (length % 2 == 0) throw IllegalArgumentException()
     for (i in 0 until length) {
         if (i % 2 == 0) {
             for (j in 0 until str[i].length)
@@ -310,13 +310,15 @@ fun mostExpensive(description: String): String {
     var k = -1
     if (length % 2 == 1) return ""
     for (i in 0 until length) {
-        if (!price(list[i]))
-            return ""
-        else
-            if (cost < list[i].toDouble()) {
-                cost = list[i].toDouble()
-                k = i - 1
-            }
+        if (i % 2 == 1) {
+            if (!price(list[i]))
+                return ""
+            else
+                if (cost < list[i].toDouble()) {
+                    cost = list[i].toDouble()
+                    k = i - 1
+                }
+        }
     }
     return list[k]
 }
