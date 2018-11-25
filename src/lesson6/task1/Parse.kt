@@ -340,6 +340,7 @@ fun fromRoman(roman: String): Int {
                 res += decimalDigits[romanNumerals.indexOf(roman[i].toString())]
         }
     }
+    if (length == 1) res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
     if (length >= 2)
         if (roman[length - 2].toString() + roman[length - 1].toString() !in romanNumerals)
             res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
