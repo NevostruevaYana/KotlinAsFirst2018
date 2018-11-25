@@ -262,12 +262,8 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> =
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    return if (word.isNotEmpty())
-        word.toLowerCase().toSet().all { it in chars }
-    else
-        true
-}
+fun canBuildFrom(chars: List<Char>, word: String): Boolean =
+        word == "" || word.toLowerCase().toSet().all { it in chars.toString().toLowerCase().toList() }
 
 /**
  * Средняя
@@ -293,8 +289,8 @@ fun extractRepeats(list: List<String>): Map<String, Int> =
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = words.map { it.toList().sorted().joinToString() } !=
-        words.map { it.toList().sorted().joinToString() }.toSet().toList()
+fun hasAnagrams(words: List<String>): Boolean = words.size !=
+        words.map { it.toList().sorted().joinToString() }.toSet().size
 
 /**
  * Сложная
@@ -341,4 +337,35 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    var res = setOf<String>()
+    val number = treasures.size + 1
+    val a = Array(number) { Array(capacity + 1) { 0 } }
+    var x: Int
+    var y: Int
+    for (i in 0 until capacity + 1)
+        a[0][i] = 0
+    for (i in 0 until number)
+        a[i][0] = 0
+    for (i in 1 until number)
+        for (j in 1 until capacity + 1) {
+            x = treasures.values.toList()[i - 1].first
+            y = treasures.values.toList()[i - 1].second
+            if (x <= j)
+                a[i][j] = max(a[i - 1][j], a[i - 1][j - x] + y)
+            else {
+                a[i][j] = a[i - 1][j]
+            }
+        }
+    fun result(m: Int, n: Int) {
+        if (a[m][n] == 0) return
+        if (a[m - 1][n] == a[m][n]) result(m - 1, n)
+        else {
+            result(m - 1, n - treasures.values.toList()[m - 1].first)
+            res += treasures.keys.toList()[m - 1]
+        }
+    }
+    result(number - 1, capacity)
+    return res
+}

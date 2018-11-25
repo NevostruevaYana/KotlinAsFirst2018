@@ -71,14 +71,14 @@ fun main(args: Array<String>) {
  * входными данными.
  */
 fun dateStrToDigit(str: String): String {
-    val map = mapOf("января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
+    val months = mapOf("января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
             "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12)
     val data = str.split(" ")
     if (data.size != 3) return "" else {
         val day = data[0].toIntOrNull()
         val year = data[2].toIntOrNull()
-        val month = map[data[1]] ?: 0
-        if (day == null || year == null || month == 0 || day !in 1..daysInMonth(month, year)) return "" else
+        val month = months[data[1]]
+        if (day == null || year == null || month == null || day !in 1..daysInMonth(month, year)) return "" else
             return String.format("%02d.%02d.%d", day, month, year)
     }
 }
@@ -95,7 +95,7 @@ fun dateStrToDigit(str: String): String {
  */
 
 fun dateDigitToStr(digital: String): String {
-    val map = mapOf(1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля", 5 to "мая", 6 to "июня",
+    val months = mapOf(1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля", 5 to "мая", 6 to "июня",
             7 to "июля", 8 to "августа", 9 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря")
     val data = digital.split(".")
     if (data.size != 3) return "" else {
@@ -105,9 +105,8 @@ fun dateDigitToStr(digital: String): String {
         if (day == null || year == null || monthInt == null) return ""
         if (monthInt !in 1..12) return ""
         if (day !in 1..daysInMonth(monthInt, year)) return ""
-        val month = map[monthInt]
-        if (month == "") return "" else
-            return String.format("%d %s %d", day, month, year)
+        val month = months[monthInt]
+        return String.format("%d %s %d", day, month, year)
     }
 }
 
@@ -133,17 +132,19 @@ fun flattenPhoneNumber(phone: String): String {
     var t = 0
     var r = 0
     for (i in 0 until length) {
-        if (phone[i] !in symbols && phone[i] !in digits || phone[i] == '+' && res.isNotEmpty()) return ""
-        if (phone[i] == '(') {
-            t++
-            if (t == 1) n = i
+        when {
+            phone[i] !in symbols && phone[i] !in digits || phone[i] == '+' && res.isNotEmpty() -> return ""
+            phone[i] == '(' -> {
+                t++
+                if (t == 1) n = i
+            }
+            phone[i] == ')' -> {
+                r++
+                if (r == 1) m = i
+            }
+            phone[i] != ' ' && phone[i] != '-' &&
+                    phone[i] != '(' && phone[i] != ')' -> res.append(phone[i])
         }
-        if (phone[i] == ')') {
-            r++
-            if (r == 1) m = i
-        }
-        if (phone[i] != ' ' && phone[i] != '-' &&
-                phone[i] != '(' && phone[i] != ')') res.append(phone[i])
     }
     if (res.length == 1 && res[0] == '+' || t !in 0..1 || r !in 0..1) return ""
     if (m == -1 || n == -1)
@@ -163,20 +164,13 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun number(str: String): Boolean {
-    var f = true
-    for (i in 0 until str.length) {
-        if (str[i] !in '0'..'9') f = false
-    }
-    return f
-}
 
 fun bestLongJump(jumps: String): Int {
     val str = jumps.split(" ")
     val length = str.size
     var res = -1
     for (i in 0 until length) {
-        if (str[i] != "-" && str[i] != "%" && !number(str[i]) && str[i] != "")
+        if (str[i] != "-" && str[i] != "%" && str[i].toIntOrNull() == null && str[i] != "")
             return -1
         else
             if (str[i] != "-" && str[i] != "%" && str[i] != "")
@@ -196,19 +190,9 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки вернуть -1.
  */
 fun symbols(str: String): Boolean {
-    var f = true
-    for (i in 0 until str.length) {
-        if (str[i] != '+' && str[i] != '-' && str[i] != '%') f = false
-    }
-    return f
-}
-
-fun symbolPlus(str: String): Boolean {
-    var f = false
-    for (i in 0 until str.length) {
-        if (str[i] == '+') f = true
-    }
-    return f
+    for (i in 0 until str.length)
+        if (str[i] != '+' && str[i] != '-' && str[i] != '%') return false
+    return true
 }
 
 fun bestHighJump(jumps: String): Int {
@@ -218,12 +202,12 @@ fun bestHighJump(jumps: String): Int {
     if (length % 2 == 1) return -1
     for (i in 0 until length) {
         if (i % 2 == 0) {
-            if (!number(str[i])) return -1
+            if (str[i].toIntOrNull() == null) return -1
         } else
             if (!symbols(str[i]))
                 return -1
             else
-                if (symbolPlus(str[i]))
+                if ('+' in str[i].toSet())
                     if (res < str[i - 1].toInt())
                         res = str[i - 1].toInt()
     }
@@ -239,29 +223,30 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
+fun number(str: String): Boolean {
+    for (i in 0 until str.length)
+        if (str[i] !in '0'..'9') return true
+    return false
+}
+
 fun plusMinus(expression: String): Int {
     val str = expression.split(" ")
     val length = str.size
     var res = 0
-    var sign = '+'
+    var sign = 1
     if (length % 2 == 0) throw IllegalArgumentException()
-    for (i in 0 until length) {
-        if (i % 2 == 0) {
-            for (j in 0 until str[i].length)
-                if (str[i][j] !in '0'..'9')
-                    throw IllegalArgumentException()
-            if
-                    (sign == '+') res += str[i].toInt()
-            else
-                res -= str[i].toInt()
-        } else
-            if (str[i] != "+" && str[i] != "-")
+    for (i in 0 until length step 2) {
+        if (i != 0)
+            if (str[i - 1] != "+" && str[i - 1] != "-")
                 throw IllegalArgumentException()
             else
-                if (str[i] == "-")
-                    sign = '-'
+                if (str[i - 1] == "-")
+                    sign = -1
                 else
-                    sign = '+'
+                    sign = 1
+        if (number(str[i]))
+            throw IllegalArgumentException()
+        res += sign * str[i].toInt()
     }
     return res
 }
@@ -304,9 +289,9 @@ fun price(str: String): Boolean {
 }
 
 fun mostExpensive(description: String): String {
-    val list = description.split("; ").joinToString(separator = " ").split(" ")
+    val list = description.split(" ")
     val length = list.size
-    var cost = 0.0
+    var cost = -1.0
     var k = -1
     if (length % 2 == 1) return ""
     for (i in 0 until length) {
@@ -337,33 +322,24 @@ fun mostExpensive(description: String): String {
 fun fromRoman(roman: String): Int {
     val romanNumerals = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
     val decimalDigits = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
+    val romans = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M')
     val length = roman.length
-    val index = StringBuilder()
     var res = 0
+    var pass = -1
     for (i in 0 until length)
-        if (roman[i] !in setOf('I', 'V', 'X', 'L', 'C', 'D', 'M')) return -1
+        if (roman[i] !in romans) return -1
     for (i in 0 until length - 4)
         if (roman[i] == roman[i + 1] && roman[i] == roman[i + 2] && roman[i] == roman[i + 3]) return -1
     for (i in 0 until length - 1) {
-        if (romanNumerals.indexOf(roman[i].toString()) < romanNumerals.indexOf(roman[i + 1].toString()))
-            index.append(i.toString())
-    }
-    val listIndex = index.toList().map { it.toInt() - 48 }
-    for (i in 0 until length - 1) {
-        if (i in listIndex) {
-            val a = roman[i].toString() + roman[i + 1].toString()
-            res += decimalDigits[romanNumerals.indexOf(a)]
+        if (roman[i].toString() + roman[i + 1].toString() in romanNumerals) {
+            res += decimalDigits[romanNumerals.indexOf(roman[i].toString() + roman[i + 1].toString())]
+            pass = i + 1
         } else {
-            if (i != 0) {
-                if (i - 1 !in listIndex)
-                    if (romanNumerals.indexOf(roman[i].toString()) >= romanNumerals.indexOf(roman[i + 1].toString()))
-                        res += decimalDigits[romanNumerals.indexOf(roman[i].toString())]
-            } else
+            if (pass != i)
                 res += decimalDigits[romanNumerals.indexOf(roman[i].toString())]
         }
-
     }
-    if (romanNumerals.indexOf(roman[length - 2].toString()) >= romanNumerals.indexOf(roman[length - 1].toString()))
+    if (roman[length - 2].toString() + roman[length - 1].toString() !in romanNumerals)
         res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
     return res
 }
