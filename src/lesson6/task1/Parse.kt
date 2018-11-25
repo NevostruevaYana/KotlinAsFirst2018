@@ -289,7 +289,7 @@ fun price(str: String): Boolean {
 }
 
 fun mostExpensive(description: String): String {
-    val list = description.split(" ")
+    val list = description.split("; ").joinToString(separator = " ").split(" ")
     val length = list.size
     var cost = -1.0
     var k = -1
@@ -326,6 +326,7 @@ fun fromRoman(roman: String): Int {
     val length = roman.length
     var res = 0
     var pass = -1
+    if (roman == "") return -1
     for (i in 0 until length)
         if (roman[i] !in romans) return -1
     for (i in 0 until length - 4)
@@ -339,8 +340,9 @@ fun fromRoman(roman: String): Int {
                 res += decimalDigits[romanNumerals.indexOf(roman[i].toString())]
         }
     }
-    if (roman[length - 2].toString() + roman[length - 1].toString() !in romanNumerals)
-        res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
+    if (length >= 2)
+        if (roman[length - 2].toString() + roman[length - 1].toString() !in romanNumerals)
+            res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
     return res
 }
 
