@@ -214,8 +214,10 @@ fun factorize(n: Int): List<Int> {
     var i = n
     while (i > 1) {
         val min = minDivisor(i)
-        s.add(min)
-        i /= min
+        while (i % min == 0) {
+            s.add(min)
+            i /= min
+        }
     }
     return s
 }
@@ -315,9 +317,8 @@ fun roman(n: Int): String {
     val decimal = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
     val res = StringBuilder()
     var m = n % 1000
-    if (n > 1000)
-        for (i in 1..n / 1000)
-            res.append(roman[12])
+    for (i in 1..n / 1000)
+        res.append("M")
     while (m > 0) {
         for (i in 0 until decimal.size) {
             if (m < decimal[i]) {
@@ -338,50 +339,58 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 
-fun russian(n: Int): String {
-    val thousands = listOf<String>("одна тысяча", "две тысячи", "три тысячи", "четыре тысячи",
-            "пять тысяч", "шесть тысяч", "семь тысяч", "восемь тысяч", "девять тысяч")
-    val units = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val ten = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
-            "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    val teen = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
-            "восемьдесят", "девяносто")
-    val hundred = listOf<String>("сто", "двести",
-            "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+val oneTwo = listOf<String>("одна", "две")
+val units = listOf<String>("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+val teen = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+        "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
+val ten = listOf<String>("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+        "восемьдесят", "девяносто")
+val hundred = listOf<String>("сто", "двести",
+        "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+val space = " "
+
+fun hundred(n: Int, k: Int): String {
     val rus = StringBuilder()
-    val space = " "
-    if (n / 100000 > 0)
-        rus.append(hundred[n / 100000 - 1] + space)
-    if (n / 1000 > 0)
-        when (n / 10000 % 10) {
-            1 -> rus.append(ten[n / 1000 % 10] + space + "тысяч")
-            0 -> {
-                if (n / 1000 % 10 == 0) rus.append("тысяч") else rus.append(thousands[n / 1000 % 10 - 1])
-            }
-            else -> {
-                rus.append(teen[n / 10000 % 10 - 2] + space)
-                if (n / 1000 % 10 > 0)
-                    rus.append(thousands[n / 1000 % 10 - 1])
-                else
-                    rus.append("тысяч")
-            }
-        }
-    if (n % 1000 > 0 && n / 1000 > 0 && n % 1000 !in 1..99)
-        rus.append(space)
-    if (n / 100 % 10 > 0)
-        rus.append(hundred[n / 100 % 10 - 1])
-    if (n / 10 % 10 > 0) {
-        if (n !in 10..99)
+    val m: Int
+    if (k == 0)
+        m = n / 1000
+    else
+        m = n % 1000
+    if (m / 100 != 0) {
+        rus.append(hundred[m / 100 - 1])
+        if (m % 100 != 0)
             rus.append(space)
-        when (n / 10 % 10) {
-            1 -> rus.append(ten[n % 10])
-            else -> rus.append(teen[n / 10 % 10 - 2])
-        }
     }
-    if (n % 10 > 0 && n / 10 % 10 != 1)
-        if (n > 9)
-            rus.append(space + units[n % 10 - 1])
-        else rus.append(units[n % 10 - 1])
+    if (m / 10 % 10 == 1) {
+        rus.append(teen[m % 10])
+    } else {
+        if (m % 100 / 10 != 0) {
+            rus.append(ten[m % 100 / 10 - 2])
+            if (m % 10 != 0)
+                rus.append(space)
+        }
+        if ((m % 10 == 1 || m % 10 == 2) && n > 1000 && k == 0) {
+            rus.append(oneTwo[m % 10 - 1])
+        } else
+            if (m % 10 != 0) {
+                rus.append(units[m % 10 - 1])
+            }
+    }
+    return rus.toString()
+}
+fun russian(n: Int): String {
+    val rus = StringBuilder()
+    if (n > 1000) {
+        rus.append(hundred(n, 0) + space)
+        when (n / 1000 % 10) {
+            1 -> rus.append("тысяча")
+            2, 3, 4 -> rus.append("тысячи")
+            else -> rus.append("тысяч")
+        }
+        if (n % 1000 > 0)
+            rus.append(space)
+    }
+    rus.append(hundred(n, 1))
     return rus.toString()
 }
 
