@@ -381,11 +381,14 @@ fun russian(n: Int): String {
     val rus = StringBuilder()
     if (n > 1000) {
         rus.append(hundred(n, 0) + space)
-        when (n / 1000 % 10) {
-            1 -> rus.append("тысяча")
-            2, 3, 4 -> rus.append("тысячи")
-            else -> rus.append("тысяч")
-        }
+        if (n / 10000 % 10 == 1)
+            rus.append("тысяч")
+        else
+            when (n / 1000 % 10) {
+                1 -> rus.append("тысяча")
+                2, 3, 4 -> rus.append("тысячи")
+                else -> rus.append("тысяч")
+            }
         if (n % 1000 > 0)
             rus.append(space)
     }
