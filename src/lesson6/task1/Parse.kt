@@ -266,15 +266,15 @@ fun mostExpensive(description: String): String {
     val list = description.split("; ", " ")
     val length = list.size
     var cost = -1.0
-    var k = -1
+    var resIndex = -1
     if (length % 2 == 1) return ""
     for (i in 0 until length step 2) {
         if (cost < list[i + 1].toDouble()) {
             cost = list[i + 1].toDouble()
-            k = i
+            resIndex = i
         }
     }
-    return list[k]
+    return list[resIndex]
 }
 
 /**
