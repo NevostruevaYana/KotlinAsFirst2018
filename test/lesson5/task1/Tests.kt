@@ -266,6 +266,8 @@ class Tests {
         assertFalse(canBuildFrom(emptyList(), "foo"))
         assertTrue(canBuildFrom(listOf('a', 'b', 'o'), "baobab"))
         assertFalse(canBuildFrom(listOf('a', 'm', 'r'), "Marat"))
+        assertTrue(canBuildFrom(listOf('a', 'm', 'r'), ""))
+        assertTrue(canBuildFrom(listOf('a', 'M', 'r'), "mama"))
     }
 
     @Test
@@ -288,7 +290,6 @@ class Tests {
     @Test
     @Tag("Normal")
     fun hasAnagrams() {
-        assertFalse(hasAnagrams(emptyList()))
         assertTrue(hasAnagrams(listOf("рот", "свет", "отр")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
     }
