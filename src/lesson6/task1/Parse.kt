@@ -123,7 +123,7 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String =
-        if (Regex("""(?:\+\d+[\s-]*)?(?:\((?:[\s-]*\d)+[\s-]*\))?(?:[\s-]*\d*)+""").matches(phone))
+        if (Regex("""(?:\+\d+[\s-]*)?(?:\((?:\d)+[\s-]*\))?(?:[\s-]*\d)+""").matches(phone))
             Regex("""-| |\)|\(""").replace(phone, "")
         else
             ""
@@ -364,10 +364,10 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     for (i in 0 until commands.length)
         if (commands[i] !in command)
             throw IllegalArgumentException()
-    if (!commandsList.isNotEmpty())
-        throw IllegalArgumentException()
     for (i in 0 until cells)
         res.add(0)
+    if (!commandsList.isNotEmpty())
+        return res
     var count = 0
     while (commandCounter < limit) {
         when (commandsList[count]) {
