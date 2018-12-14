@@ -3,6 +3,7 @@
 package lesson6.task1
 import lesson2.task2.daysInMonth
 
+
 /**
  * Пример
  *
@@ -123,7 +124,7 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String =
-        if (Regex("""(?:\+\d+[\s-]*)?(?:\((?:\d)+[\s-]*\))?(?:[\s-]*\d)+""").matches(phone))
+        if (phone.filter { it != ' ' && it != '-' }.matches(Regex("""\+\d*|(\+\d*)\(\d*\)\d*|\d*""")))
             Regex("""-| |\)|\(""").replace(phone, "")
         else
             ""
@@ -141,15 +142,12 @@ fun flattenPhoneNumber(phone: String): String =
  */
 
 fun bestLongJump(jumps: String): Int {
-    val str = jumps.split(" ")
-    val length = str.size
     var res = -1
-    for (i in 0 until length) {
-        if (str[i] != "-" && str[i] != "%" && str[i].toIntOrNull() == null && str[i] != "")
+    jumps.split(' ').forEach {
+        if (!Regex("""[-%]||\d+""").matches(it))
             return -1
-        else
-            if (str[i] != "-" && str[i] != "%" && str[i] != "")
-                if (res < str[i].toInt()) res = str[i].toInt()
+        if (it.toIntOrNull() != null)
+            if (it.toInt() > res) res = it.toInt()
     }
     return res
 }
@@ -164,31 +162,18 @@ fun bestLongJump(jumps: String): Int {
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun symbols(str: String): Boolean {
-    for (i in 0 until str.length)
-        if (str[i] != '+' && str[i] != '-' && str[i] != '%') return false
-    return true
-}
-
-fun plus(str: String): Boolean {
-    for (i in 0 until str.length)
-        if (str[i] == '+') return true
-    return false
-}
 
 fun bestHighJump(jumps: String): Int {
-    val str = jumps.split(" ")
-    val length = str.size
+    if (!Regex("""(?:\d+ \S+)(?: \d+ \S+)*""").matches(jumps))
+        return -1
+    if ((jumps.contains(Regex("""[^\d\s-%+]"""))) || (jumps.isEmpty()))
+        return -1
     var res = -1
-    if (length % 2 == 1) return -1
-    for (i in 0 until length step 2) {
-        if (str[i].toIntOrNull() == null) return -1
-        if (!symbols(str[i + 1]))
-            return -1
-        else
-            if (plus(str[i + 1]))
-                if (res < str[i].toInt())
-                    res = str[i].toInt()
+    val str = jumps.split(" ")
+    for (i in 0 until str.size step 2) {
+        if ('+' in str[i + 1])
+            if (str[i].toInt() > res)
+                res = str[i].toInt()
     }
     return res
 }
@@ -202,33 +187,16 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun number(str: String): Boolean {
-    for (i in 0 until str.length)
-        if (str[i] !in '0'..'9') return true
-    return false
-}
 
 fun plusMinus(expression: String): Int {
+    if (!Regex("""(?:[-]?\d+)(?: [+-] \d+)*""").matches(expression))
+        throw IllegalArgumentException()
     val str = expression.split(" ")
-    val length = str.size
-    var res = 0
-    var sign = 1
-    if (expression == "") throw IllegalArgumentException()
-    if (length % 2 == 0) throw IllegalArgumentException()
-    for (i in 0 until length step 2) {
-        if (i != 0)
-            if (str[i - 1] != "+" && str[i - 1] != "-")
-                throw IllegalArgumentException()
-            else
-                if (str[i - 1] == "-")
-                    sign = -1
-                else
-                    sign = 1
-        if (number(str[i]))
-            throw IllegalArgumentException()
-        res += sign * str[i].toInt()
+    var sum = str[0].toInt()
+    for (i in 1 until str.size step 2) {
+        sum += (str[i] + str[i + 1]).toInt()
     }
-    return res
+    return sum
 }
 
 /**
@@ -289,31 +257,31 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    if (!Regex("""(M*)(CM)?(D)?(CD)?(C{0,3})(XC)?(L)?(XL)?(X{0,3})(IX)?(V)?(IV)?(I{0,3})""").matches(roman))
+    val romanMap = mapOf("I" to 1, "IV" to 4, "V" to 5, "IX" to 9, "X" to 10, "XL" to 40,
+            "L" to 50, "XC" to 90, "C" to 100, "CD" to 400, "D" to 500, "CM" to 900, "M" to 1000)
+    if (!Regex("""M*(?:CM|DC{0,3}|CD|C{0,3})?(?:XC|LX{0,3}|XL|X{0,3})?(?:IX|VI{0,3}|IV|I{0,3})?""").matches(roman) || roman.isEmpty())
         return -1
-    val romanNumerals = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
-    val decimalDigits = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
     val length = roman.length
     var res = 0
     var count = 0
     if (roman == "") return -1
     while (count < length - 1) {
         when {
-            roman[count].toString() + roman[count + 1].toString() in romanNumerals -> {
-                res += decimalDigits[romanNumerals.indexOf(roman[count].toString() + roman[count + 1].toString())]
+            roman[count].toString() + roman[count + 1].toString() in romanMap.keys -> {
+                res += romanMap[roman[count].toString() + roman[count + 1].toString()]!!
                 count += 2
             }
             else -> {
-                res += decimalDigits[romanNumerals.indexOf(roman[count].toString())]
+                res += romanMap[roman[count].toString()]!!
                 count++
             }
         }
     }
     if (length == 1)
-        res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
+        res += romanMap[roman[length - 1].toString()]!!
     if (length >= 2)
-        if (roman[length - 2].toString() + roman[length - 1].toString() !in romanNumerals)
-            res += decimalDigits[romanNumerals.indexOf(roman[length - 1].toString())]
+        if (roman[length - 2].toString() + roman[length - 1].toString() !in romanMap.keys)
+            res += romanMap[roman[length - 1].toString()]!!
     return res
 }
 
@@ -355,48 +323,56 @@ fun fromRoman(roman: String): Int {
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val command = setOf('+', '-', '<', '>', '[', ']', ' ')
-    val commandsList = commands.split("").filter { it != "" }
     val res = mutableListOf<Int>()
     var positionNumber = cells / 2
     var commandCounter = 0
-    if (commandsList.filter { it == "[" }.size != commandsList.filter { it == "]" }.size)
+    var k = 0
+    if (commands.count { it == '[' } != commands.count { it == ']' })
         throw IllegalArgumentException()
+    commands.filter { it == '[' || it == ']' }.forEach {
+        if (it == '[')
+            k++
+        else
+            k--
+        if (k < 0)
+            throw IllegalArgumentException()
+    }
     for (i in 0 until commands.length)
         if (commands[i] !in command)
             throw IllegalArgumentException()
     for (i in 0 until cells)
         res.add(0)
-    if (!commandsList.isNotEmpty())
+    if (commands.isEmpty())
         return res
     var count = 0
     while (commandCounter < limit) {
-        when (commandsList[count]) {
-            ">" -> positionNumber++
-            "<" -> positionNumber--
-            "+" -> res[positionNumber]++
-            "-" -> res[positionNumber]--
-            "[" -> if (res[positionNumber] == 0) {
+        when (commands[count]) {
+            '>' -> positionNumber++
+            '<' -> positionNumber--
+            '+' -> res[positionNumber]++
+            '-' -> res[positionNumber]--
+            ' ' -> ""
+            '[' -> if (res[positionNumber] == 0) {
                 var searchPairBracket = 0
                 while (searchPairBracket != -1) {
                     count++
-                    when (commandsList[count]) {
-                        "[" -> searchPairBracket++
-                        "]" -> searchPairBracket--
+                    when (commands[count]) {
+                        '[' -> searchPairBracket++
+                        ']' -> searchPairBracket--
                     }
                 }
             }
-            "]" -> if (res[positionNumber] != 0) {
+            ']' -> if (res[positionNumber] != 0) {
                 var searchPairBracket = 0
                 while (searchPairBracket != -1) {
                     count--
-                    when (commandsList[count]) {
-                        "[" -> searchPairBracket--
-                        "]" -> searchPairBracket++
+                    when (commands[count]) {
+                        '[' -> searchPairBracket--
+                        ']' -> searchPairBracket++
                     }
                 }
             }
-            else -> if (commandsList[count] != " ")
-                throw IllegalArgumentException()
+            else -> throw IllegalArgumentException()
         }
         count++
         commandCounter++
