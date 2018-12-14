@@ -262,7 +262,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> =
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean =
-        word == "" || word.toLowerCase().toSet().all { it in chars.toString().toLowerCase().toList() }
+        chars.map { it.toLowerCase() }.containsAll(word.toLowerCase().toSet())
 
 /**
  * Средняя
@@ -289,7 +289,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> =
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean = words.size !=
-        words.map { it.toList().sorted().joinToString() }.toSet().size
+        words.map { it.toSet() }.toSet().size
 
 /**
  * Сложная
@@ -312,14 +312,14 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     if (list.isEmpty())
         return Pair(-1, -1)
     val newList = list.mapIndexed { index, it -> it to index }
-    var a = list.size - 1
-    var i = 0
-    while (i != a) {
-        val sum = newList[i].first + newList[a].first
+    var maxAddendum = list.size - 1
+    var minAddendum = 0
+    while (minAddendum != maxAddendum) {
+        val sum = newList[minAddendum].first + newList[maxAddendum].first
         when {
-            sum == number -> return Pair(newList[i].second, newList[a].second)
-            sum < number -> i++
-            else -> a--
+            sum == number -> return Pair(newList[minAddendum].second, newList[maxAddendum].second)
+            sum < number -> minAddendum++
+            else -> maxAddendum--
         }
     }
     return Pair(-1, -1)
