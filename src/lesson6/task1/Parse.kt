@@ -325,19 +325,22 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val command = setOf('+', '-', '<', '>', '[', ']', ' ')
-    val res = mutableListOf<Int>()
+    val res = Array(cells) { 0 }
     var positionNumber = cells / 2
     var commandCounter = 0
-    if (commands.count { it == '[' } != commands.count { it == ']' })
-        throw IllegalArgumentException()
-    for (i in 0 until commands.length)
-        if (commands[i] !in command)
+    var bracketTesting = 0
+    commands.forEach {
+        when (it) {
+            '[' -> bracketTesting++
+            ']' -> bracketTesting--
+        }
+        if (bracketTesting < 0)
             throw IllegalArgumentException()
-    for (i in 0 until cells)
-        res.add(0)
+    }
+    if (bracketTesting > 0)
+        throw IllegalArgumentException()
     if (commands.isEmpty())
-        return res
+        return res.toList()
     var count = 0
     while (commandCounter < limit) {
         when (commands[count]) {
@@ -375,5 +378,5 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         if (count == commands.length)
             break
     }
-    return res
+    return res.toList()
 }
