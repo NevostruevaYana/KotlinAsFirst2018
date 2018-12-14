@@ -330,7 +330,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var positionNumber = cells / 2
     var commandCounter = 0
     var k = 0
-    var flag = true
     if (commands.count { it == '[' } != commands.count { it == ']' })
         throw IllegalArgumentException()
     commands.filter { it == '[' || it == ']' }.forEach {
@@ -339,7 +338,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         else
             k--
         if (k < 0)
-            flag = false
+            throw IllegalArgumentException()
     }
     for (i in 0 until commands.length)
         if (commands[i] !in command)
@@ -385,7 +384,5 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         if (count == commands.length)
             break
     }
-    if (!flag)
-        throw IllegalArgumentException()
     return res
 }
