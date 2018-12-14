@@ -213,7 +213,8 @@ fun factorize(n: Int): List<Int> {
     val list = mutableListOf<Int>()
     var num = n
     var count = 2
-
+    if (n == Int.MAX_VALUE)
+        return listOf(Int.MAX_VALUE)
     while (count <= num) {
         if (num % count == 0) {
             list.add(count)
