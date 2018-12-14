@@ -311,7 +311,7 @@ fun hasAnagrams(words: List<String>): Boolean = words.size !=
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     if (list.isEmpty())
         return Pair(-1, -1)
-    val newList = list.mapIndexed { index, it -> it to index }
+    val newList = list.mapIndexed { index, it -> it to index }.sortedBy { (number, _) -> number }
     var maxAddendum = list.size - 1
     var minAddendum = 0
     while (minAddendum != maxAddendum) {
