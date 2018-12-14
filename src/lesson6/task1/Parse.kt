@@ -329,17 +329,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val res = mutableListOf<Int>()
     var positionNumber = cells / 2
     var commandCounter = 0
-    var k = 0
     if (commands.count { it == '[' } != commands.count { it == ']' })
         throw IllegalArgumentException()
-    commands.filter { it == '[' || it == ']' }.forEach {
-        if (it == '[')
-            k++
-        else
-            k--
-        if (k < 0)
-            throw IllegalArgumentException()
-    }
     for (i in 0 until commands.length)
         if (commands[i] !in command)
             throw IllegalArgumentException()
