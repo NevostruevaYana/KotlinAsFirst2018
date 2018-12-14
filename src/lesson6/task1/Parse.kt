@@ -164,16 +164,19 @@ fun bestLongJump(jumps: String): Int {
  */
 
 fun bestHighJump(jumps: String): Int {
-    if (!Regex("""(?:\d+ \S+)(?: \d+ \S+)*""").matches(jumps))
-        return -1
     if ((jumps.contains(Regex("""[^\d\s-%+]"""))) || (jumps.isEmpty()))
         return -1
     var res = -1
-    val str = jumps.split(" ")
-    for (i in 0 until str.size step 2) {
-        if ('+' in str[i + 1])
-            if (str[i].toInt() > res)
-                res = str[i].toInt()
+    val jump = jumps.split(" ")
+    val high = mutableListOf<String>()
+    for (i in 0 until jump.size step 2) {
+        if (jump[i + 1].contains(Regex("""[%-+]"""))) {
+            if (jump[i + 1].contains("+"))
+                if (jump[i].toIntOrNull() != null) {
+                    if (jump[i].toInt() > res)
+                        res = jump[i].toInt()
+                } else return -1
+        } else return -1
     }
     return res
 }
@@ -327,6 +330,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var positionNumber = cells / 2
     var commandCounter = 0
     var k = 0
+    var f = true
     if (commands.count { it == '[' } != commands.count { it == ']' })
         throw IllegalArgumentException()
     commands.filter { it == '[' || it == ']' }.forEach {
@@ -335,7 +339,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         else
             k--
         if (k < 0)
-            throw IllegalArgumentException()
+            f = false
     }
     for (i in 0 until commands.length)
         if (commands[i] !in command)
@@ -381,5 +385,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         if (count == commands.length)
             break
     }
+    if (!f)
+        throw IllegalArgumentException()
     return res
 }
