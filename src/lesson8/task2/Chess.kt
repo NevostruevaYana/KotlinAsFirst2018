@@ -159,7 +159,7 @@ fun mediumSquare(start: Square, end: Square): Square {
     }
     if (Square(mediumColumn, mediumRow).inside())
         return Square(mediumColumn, mediumRow)
-    return Square(mediumColumn - start.column, mediumRow)
+    return Square(2 * start.column - mediumColumn, mediumRow)
 }
 
 fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMoveNumber(start, end)) {

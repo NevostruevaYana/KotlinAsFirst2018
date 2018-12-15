@@ -326,29 +326,29 @@ fun fromRoman(roman: String): Int {
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val res = Array(cells) { 0 }
-    var positionNumber = cells / 2
-    var commandCounter = 0
-    var bracketTesting = 0
-    commands.forEach {
-        when (it) {
-            '[' -> bracketTesting++
-            ']' -> bracketTesting--
-        }
-        if (bracketTesting < 0)
-            throw IllegalArgumentException()
-    }
-    if (bracketTesting > 0)
-        throw IllegalArgumentException()
     if (commands.isEmpty())
         return res.toList()
+    var positionNumber = cells / 2
+    var commandCounter = 0
+    var checkBrackets = 0
+    for (i in 0 until commands.length) {
+        when (commands[i]) {
+            '[' -> checkBrackets++
+            ']' -> checkBrackets--
+        }
+        if (checkBrackets < 0)
+            throw IllegalArgumentException()
+    }
+    if (checkBrackets > 0)
+        throw IllegalArgumentException()
     var count = 0
-    while (commandCounter < limit) {
+    while (commandCounter < limit && count < commands.length) {
         when (commands[count]) {
             '>' -> positionNumber++
             '<' -> positionNumber--
             '+' -> res[positionNumber]++
             '-' -> res[positionNumber]--
-            ' ' -> ""
+            ' ' -> {}
             '[' -> if (res[positionNumber] == 0) {
                 var searchPairBracket = 0
                 while (searchPairBracket != -1) {
@@ -375,8 +375,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         commandCounter++
         if (positionNumber !in 0 until cells)
             throw IllegalStateException()
-        if (count == commands.length)
-            break
     }
     return res.toList()
 }
