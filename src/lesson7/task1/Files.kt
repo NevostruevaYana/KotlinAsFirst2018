@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.*
 
 /**
  * Пример
@@ -104,7 +105,17 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val lines = File(inputName).readLines().map { it.trim() }
+    var max = lines[0].length
+    for (i in 1 until lines.size) {
+        if (lines[i].length > max)
+            max = lines[i].length
+    }
+    File(outputName).writeText(
+            lines.joinToString("\n") {
+                " ".repeat((max - it.length) / 2) + it
+            }
+    )
 }
 
 /**
@@ -135,7 +146,41 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = mutableListOf<String>()
+    for (i in File(inputName).readLines()) {
+        lines.add(i.trim().replace(Regex("""\s+"""), " "))
+    }
+    var maxLength = lines[0].length
+    if (lines.isNotEmpty())
+        for (i in lines)
+            if (maxLength < i.length)
+                maxLength = i.length
+    for (i in lines) {
+        val wordsList = i.split(" ")
+        if (i.length == maxLength || wordsList.size < 2) {
+            writer.appendln(i)
+            continue
+        }
+        val space = wordsList.size - 1
+        val count = maxLength - i.length
+        var separator = " "
+        for (j in 0 until count / space)
+            separator += " "
+        var residue = count % space
+        var k = 0
+        while (residue != 0) {
+            writer.append(wordsList[k] + separator + " ")
+            k++
+            residue--
+        }
+        for (j in k until space) {
+            writer.append(wordsList[k] + separator + "")
+            k++
+        }
+        writer.appendln(wordsList.last())
+    }
+    writer.close()
 }
 
 /**
