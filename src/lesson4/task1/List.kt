@@ -6,6 +6,7 @@ import lesson3.task1.minDivisor
 import lesson1.task1.discriminant
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
+import lesson3.task1.isPrime
 
 /**
  * Пример
@@ -213,8 +214,8 @@ fun factorize(n: Int): List<Int> {
     val list = mutableListOf<Int>()
     var num = n
     var count = 2
-    if (n == Int.MAX_VALUE)
-        return listOf(Int.MAX_VALUE)
+    if (isPrime(n))
+        return listOf(n)
     while (count <= num) {
         if (num % count == 0) {
             list.add(count)
