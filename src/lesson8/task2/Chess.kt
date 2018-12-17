@@ -2,6 +2,7 @@
 package lesson8.task2
 
 import kotlin.math.*
+import lesson1.task1.sqr
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -15,6 +16,7 @@ data class Square(val column: Int, val row: Int) {
      * Возвращает true, если клетка находится в пределах доски
      */
     fun inside(): Boolean = column in 1..8 && row in 1..8
+
 
     /**
      * Простая
@@ -66,16 +68,13 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int {
-    if (!start.inside() || !end.inside())
-        throw IllegalArgumentException()
-    if (start == end)
-        return 0
-    return if (start.column == end.column || start.row == end.row)
-        1
-    else
-        2
+fun rookMoveNumber(start: Square, end: Square): Int = when {
+    !start.inside() || !end.inside() -> throw IllegalArgumentException()
+    start == end -> 0
+    start.column == end.column || start.row == end.row -> 1
+    else -> 2
 }
+
 
 /**
  * Средняя
@@ -94,8 +93,7 @@ fun rookMoveNumber(start: Square, end: Square): Int {
 fun rookTrajectory(start: Square, end: Square): List<Square> = when (rookMoveNumber(start, end)) {
     0 -> listOf(start)
     1 -> listOf(start, end)
-    2 -> listOf(start, Square(start.column, end.row), end)
-    else -> throw IllegalArgumentException()
+    else -> listOf(start, Square(start.column, end.row), end)
 }
 
 /**
@@ -148,18 +146,18 @@ fun bishopMoveNumber(start: Square, end: Square): Int = when {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun mediumSquare(start: Square, end: Square): Square {
-    var mediumColumn = start.column
-    var mediumRow = start.row
-    while (abs(end.column - mediumColumn) != abs(end.row - mediumRow)) {
-        mediumColumn++
-        if (end.row > start.row)
-            mediumRow++
-        else
-            mediumRow--
-    }
-    if (Square(mediumColumn, mediumRow).inside())
-        return Square(mediumColumn, mediumRow)
-    return Square(2 * start.column - mediumColumn, mediumRow)
+    var f = 0
+    if ((start.column + start.row) % 2 == 1)
+        f = 1
+    for (i in 1..8)
+        for (j in 1..8) {
+            if ((i + j) % 2 == f)
+                if (sqr(start.column - end.column) + sqr(start.row - end.row) ==
+                        sqr(start.column - i) + sqr(start.row - j) +
+                        sqr(end.column - i) + sqr(end.row - j) && Square(i, j) != start && Square(i, j) != end)
+                    return Square(i, j)
+        }
+    return Square(0, 0)
 }
 
 fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMoveNumber(start, end)) {
@@ -189,12 +187,11 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMov
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = when {
-    !start.inside() || !end.inside() -> throw IllegalArgumentException()
-    start.column == end.column || start.row == end.row -> abs(start.column - end.column) + abs(start.row - end.row)
-    abs(start.column - end.column) > abs(start.row - end.row) -> abs(start.column - end.column)
-    else -> abs(start.row - end.row)
-}
+fun kingMoveNumber(start: Square, end: Square): Int =
+        if (!start.inside() || !end.inside())
+            throw IllegalArgumentException()
+        else
+            kingTrajectory(start, end).size - 1
 
 /**
  * Сложная
@@ -211,67 +208,35 @@ fun kingMoveNumber(start: Square, end: Square): Int = when {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
-    val list = mutableListOf<Square>()
-    when {
-        !start.inside() || !end.inside() -> throw IllegalArgumentException()
-        start == end -> list.add(start)
-        start.column == end.column ->
-            for (i in minOf(start.row, end.row)..maxOf(start.row, end.row))
-                list.add(Square(start.column, i))
-        start.row == end.row ->
-            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column))
-                list.add(Square(i, start.row))
-        start.column > end.column && start.row > end.row -> {
-            var stepsColumn = start.column + 1
-            var stepsRow = start.row + 1
-            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column)) {
-                stepsColumn--
-                stepsRow--
-                list.add(Square(stepsColumn, stepsRow))
+    if (!start.inside() || !end.inside())
+        throw IllegalArgumentException()
+    val trajectory = mutableListOf<Square>()
+    trajectory.add(start)
+    while (trajectory.last() != end) {
+        val cellX = trajectory.last().column
+        val cellY = trajectory.last().row
+        val endX = end.column
+        val endY = end.row
+        when {
+            cellX == endX -> {
+                if (cellY < endY)
+                    trajectory.add(Square(cellX, cellY + 1))
+                else
+                    trajectory.add(Square(cellX, cellY - 1))
             }
-            stepsRow--
-            for (i in stepsRow downTo end.row)
-                list.add(Square(end.column, i))
-        }
-        start.column < end.column && start.row < end.row -> {
-            var stepsColumn = start.column - 1
-            var stepsRow = start.row - 1
-            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column)) {
-                stepsColumn++
-                stepsRow++
-                list.add(Square(stepsColumn, stepsRow))
+            cellY == endY -> {
+                if (cellX < endX)
+                    trajectory.add(Square(cellX + 1, cellY))
+                else
+                    trajectory.add(Square(cellX - 1, cellY))
             }
-            stepsRow++
-            for (i in stepsRow..end.row)
-                list.add(Square(end.column, i))
-        }
-        start.column > end.column && start.row < end.row -> {
-            var stepsColumn = start.column + 1
-            var stepsRow = start.row - 1
-            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column)) {
-                stepsColumn--
-                stepsRow++
-                list.add(Square(stepsColumn, stepsRow))
-            }
-            stepsRow++
-            for (i in stepsRow..end.row)
-                list.add(Square(end.column, i))
-
-        }
-        start.column < end.column && start.row > end.row -> {
-            var stepsColumn = start.column - 1
-            var stepsRow = start.row + 1
-            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column)) {
-                stepsColumn++
-                stepsRow--
-                list.add(Square(stepsColumn, stepsRow))
-            }
-            stepsRow--
-            for (i in stepsRow downTo end.row)
-                list.add(Square(end.column, i))
+            cellX < endX && cellY < endY -> trajectory.add(Square(cellX + 1, cellY + 1))
+            cellX > endX && cellY > endY -> trajectory.add(Square(cellX - 1, cellY - 1))
+            cellX < endX && cellY > endY -> trajectory.add(Square(cellX + 1, cellY - 1))
+            else -> trajectory.add(Square(cellX - 1, cellY + 1))
         }
     }
-    return list
+    return trajectory
 }
 
 
