@@ -168,7 +168,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
             }
             val residue = count % space
             var k = 0
-            for (i in 0 until residue) {
+            for (c in 0 until residue) {
                 it.append(wordsList[k] + separator + " ")
                 k++
             }
