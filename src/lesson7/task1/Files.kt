@@ -58,7 +58,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val res = mutableMapOf<String, Int>()
     val text = File(inputName).readText()
     for (i in substrings)
-        res[i] = i.toRegex(RegexOption.IGNORE_CASE).findAll(text).toList().size
+        res[i] = Regex(i.toLowerCase()).findAll(text).toList().size
     return res
 }
 
@@ -77,14 +77,8 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    var input = File(inputName).readText()
-    val symbols = listOf('Ж', 'Ч', 'Ш', 'Щ', 'ж', 'ч', 'ш', 'щ')
-    val next = listOf('Ы', 'Я', 'Ю', 'ы', 'я', 'ю')
-    val correct = listOf('И', 'А', 'У', 'и', 'а', 'у')
-    for (i in symbols)
-        for (j in 0 until next.size)
-            input = input.replace((i.toString() + next[j]).toRegex(), i.toString() + correct[j])
-    File(outputName).writeText(input)
+    val mistakes = mutableMapOf("Ы" to "И", "ы" to "и", "Я" to "А", "я" to "а", "ю" to "у", "Ю" to "У")
+    File(outputName).writeText(File(inputName).readText().replace(Regex("""(?<=[ЖжЧчШшЩщ])[ЫыЯяЮю]""")) { mistakes[it.value].toString() })
 }
 
 /**
@@ -150,41 +144,41 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     if (File(inputName).readText() == "")
         return File(outputName).writeText("")
-    val writer = File(outputName).bufferedWriter()
-    val lines = mutableListOf<String>()
-    for (i in File(inputName).readLines()) {
-        lines.add(i.trim().replace(Regex("""\s+"""), " "))
+    File(outputName).bufferedWriter().use {
+        val lines = mutableListOf<String>()
+        File(inputName).readLines().map {
+            lines.add(it.trim().replace(Regex("""\s+"""), " "))
+        }
+        var maxLength = lines[0].length
+        if (lines.isNotEmpty())
+            for (i in lines)
+                if (maxLength < i.length)
+                    maxLength = i.length
+        for (i in lines) {
+            val wordsList = i.split(" ")
+            if (i.length == maxLength || wordsList.size < 2) {
+                it.appendln(i)
+                continue
+            }
+            val space = wordsList.size - 1
+            val count = maxLength - i.length
+            var separator = " "
+            repeat(count / space) {
+                separator += " "
+            }
+            val residue = count % space
+            var k = 0
+            for (i in 0 until residue) {
+                it.append(wordsList[k] + separator + " ")
+                k++
+            }
+            for (j in k until space) {
+                it.append(wordsList[k] + separator)
+                k++
+            }
+            it.appendln(wordsList.last())
+        }
     }
-    var maxLength = lines[0].length
-    if (lines.isNotEmpty())
-        for (i in lines)
-            if (maxLength < i.length)
-                maxLength = i.length
-    for (i in lines) {
-        val wordsList = i.split(" ")
-        if (i.length == maxLength || wordsList.size < 2) {
-            writer.appendln(i)
-            continue
-        }
-        val space = wordsList.size - 1
-        val count = maxLength - i.length
-        var separator = " "
-        for (j in 0 until count / space)
-            separator += " "
-        var residue = count % space
-        var k = 0
-        while (residue != 0) {
-            writer.append(wordsList[k] + separator + " ")
-            k++
-            residue--
-        }
-        for (j in k until space) {
-            writer.append(wordsList[k] + separator + "")
-            k++
-        }
-        writer.appendln(wordsList.last())
-    }
-    writer.close()
 }
 
 /**
@@ -271,7 +265,18 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    if (File(inputName).readText() == "")
+        return File(outputName).writeText("")
+    val res = mutableListOf<String>()
+    val input = File(inputName).readText().split("\n").forEach {
+        var max = 0
+        if (it.length == it.toLowerCase().toSet().size) {
+            res.add(it)
+            if (it.length > max)
+                max = it.length
+        }
+    }
+    return File(outputName).writeText("")
 }
 
 /**
