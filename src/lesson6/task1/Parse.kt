@@ -380,8 +380,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         }
         count++
         commandCounter++
-        if (positionNumber !in 0 until cells)
+        if (positionNumber !in 0..cells)
             throw IllegalStateException()
     }
     return res.toList()
 }
+
