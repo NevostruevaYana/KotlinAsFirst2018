@@ -328,15 +328,10 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
+
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val sign = listOf(' ', '>', '<', '-', '+', '[', ']')
-    for (i in commands)
-        if (i !in sign)
-            throw IllegalArgumentException()
     val res = Array(cells) { 0 }
-    if (commands.isEmpty())
-        return res.toList()
-    var positionNumber = cells / 2
+    var count = 0
     var commandCounter = 0
     var checkBrackets = 0
     for (i in commands) {
@@ -349,7 +344,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     }
     if (checkBrackets > 0)
         throw IllegalArgumentException()
-    var count = 0
+    var positionNumber = cells / 2
     while (commandCounter < limit && count < commands.length) {
         when (commands[count]) {
             '>' -> positionNumber++
@@ -377,12 +372,14 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     }
                 }
             }
+            else -> throw IllegalArgumentException()
         }
         count++
         commandCounter++
-        if (positionNumber !in 0..cells)
+        if (positionNumber < 0 || positionNumber >= cells)
             throw IllegalStateException()
     }
+
     return res.toList()
 }
 
